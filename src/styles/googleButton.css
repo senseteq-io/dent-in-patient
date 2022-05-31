@@ -1,0 +1,44 @@
+.firebaseui-container {
+  margin: 0 !important;
+  max-width: none !important;
+}
+.firebaseui-card-content, .firebaseui-card-footer {
+  padding: 0 !important;
+}
+.firebaseui-idp-list, .firebaseui-tenant-list {
+  margin: 0 !important;
+}
+.firebaseui-idp-list>.firebaseui-list-item, .firebaseui-tenant-list>.firebaseui-list-item {
+  margin-bottom: 0 !important;
+}
+.firebaseui-idp-button, .firebaseui-tenant-button {
+  max-width: none !important;
+  height: var(--ql-component-height-lg) !important;
+}
+.mdl-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--btn-border-radius-lg) !important;
+  transition: box-shadow .2s cubic-bezier(.4,0,1,1),background-color .2s cubic-bezier(.4,0,.2,1),color .2s cubic-bezier(.4,0,.2,1);
+}
+.firebaseui-idp-icon {
+  height: 24px !important;
+  width: 24px !important;
+}
+.firebaseui-idp-text {
+  font-size: var(--btn-font-size-lg) !important;
+  line-height: var(--ql-typography-text-line-height-lg);
+  padding-left: 16px !important;
+}
+.firebaseui-idp-google>.firebaseui-idp-text {
+  color: var(--btn-white-color) !important;
+  transition: color .2s cubic-bezier(.4,0,.2,1);
+}
+.mdl-button--raised:hover {
+  box-shadow: 0 6px 8px 0 rgb(0 0 0 / 4%), 0 8px 8px -2px rgb(0 0 0 / 8%), 0 16px 48px -16px rgb(0 0 0 / 12%) !important;
+}
+.mdl-button:hover.firebaseui-idp-google>.firebaseui-idp-text {
+  color: var(--ql-typography-text-color-primary) !important;
+  transition: color .2s cubic-bezier(.4,0,.2,1);
+}

@@ -1,0 +1,9 @@
+:root {
+  --header-background-color: #fff;
+  --header-padding-top: 12px;
+  --header-padding-bottom: 12px;
+  --header-box-shadow: none;
+  --header-border-bottom-color: #efefef;
+  --header-border-bottom-style: solid;
+  --header-border-bottom-width: 1px;
+}

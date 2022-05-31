@@ -1,0 +1,38 @@
+:root {
+  --ql-font-family-main: 'Open Sans', sans-serif;
+  --ql-font-family-headings: 'Montserrat Alternates', sans-serif;
+
+  /* Outline */
+  --ql-outline-color-danger:  var(--ql-color-danger-t-lighten4);
+
+  /* Layout */
+  --ql-general-layout-px-xxs: 16px; /* mobile (portrait): 0 - 576px */
+
+  --ql-layout-background: var(--ql-color-dark-t-lighten6);
+
+  /* Aside */
+  --ql-aside-background: var(--ql-color-white);
+  --ql-aside-padding: 24px;
+
+  /* Button */
+  --btn-border-color: var(--ql-color-dark-t-lighten4);
+
+  --btn-default-color: var(--ql-typography-text-color-secondary);
+  --btn-default-hover-bg: transparent;
+  --btn-default-hover-color: var(--ql-color-accent1);
+
+  --btn-text-hover-bg: var(--ql-color-dark-t-lighten5);
+  --btn-text-hover-color: var(--ql-color-dark);
+
+  /* Dropdown */
+  --dropdown-item-default-bg-hover: var(--ql-color-dark-t-lighten5);
+  --dropdown-item-danger-bg-hover: var(--ql-color-danger-t-lighten5);
+
+  /* Menu */
+  --ql-menu-group-title-font-weight: var(--ql-font-weight-semibold);
+  --ql-menu-group-title-color: var(--ql-color-dark-t-lighten2);
+  --ql-menu-group-title-padding: 8px 24px;
+
+  /* Account */
+  --ql-account-avatar-box-shadow-hover: inset 0 0 0 2px var(--ql-color-accent1);
+}
