@@ -35,4 +35,14 @@
 
   /* Account */
   --ql-account-avatar-box-shadow-hover: inset 0 0 0 2px var(--ql-color-accent1);
+
+  --ql-color-accent1: rgb(91, 173, 189);
+  --ql-color-accent1-t-lighten1: rgb(91, 173, 189, var(--ql-color-blending-lighten1));
+  --ql-color-accent1-t-lighten2: rgb(91, 173, 189, var(--ql-color-blending-lighten2));
+  --ql-color-accent1-t-lighten3: rgb(91, 173, 189, var(--ql-color-blending-lighten3));
+  --ql-color-accent1-t-lighten4: rgb(91, 173, 189, var(--ql-color-blending-lighten4));
+  --ql-color-accent1-t-lighten5: rgb(91, 173, 189, var(--ql-color-blending-lighten5));
+  --ql-color-accent1-t-lighten6: rgb(91, 173, 189, var(--ql-color-blending-lighten6));
+  --ql-border-radius-lg: 32px;
+  --btn-border-radius-base: var(--ql-border-radius-lg);
 }

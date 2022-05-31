@@ -1,36 +1,24 @@
 import { Col, Menu, MenuItem, Row } from '@qonsoll/react-design'
+import { DashboardFilled } from '@ant-design/icons'
 
-import { AppstoreOutlined } from '@ant-design/icons'
 import { LanguageSelect } from 'domains/Translation/components'
+import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const MainMenu = () => {
   const { t } = useTranslations()
+  const history = useHistory()
   const menuItems = useMemo(
     () => [
       {
         value: 'DASHBOARD',
-        icon: <AppstoreOutlined />,
-        text: t('Dashboard')
+        icon: <DashboardFilled style={{ fontSize: '24px' }} />,
+        text: t('Dashboard'),
+        onClick: () => history.push('/dashboard')
       }
-      // {
-      //   value: 'ROLES',
-      //   icon: <TeamOutlined />,
-      //   text: t('Roles')
-      // },
-      // {
-      //   value: 'STYLING',
-      //   icon: <FormatPainterOutlined />,
-      //   text: t('Styling')
-      // },
-      // {
-      //   value: 'DB_STRUCTURE',
-      //   icon: <DatabaseOutlined />,
-      //   text: t('DB structure')
-      // }
     ],
-    [t]
+    [t, history]
   )
   return (
     <>
@@ -41,7 +29,11 @@ const MainMenu = () => {
       </Row>
       <Menu mode="inline">
         {menuItems.map((item, index) => (
-          <MenuItem key={`${item.value}-${index}`} icon={item.icon}>
+          <MenuItem
+            onClick={item.onClick}
+            key={`${item.value}-${index}`}
+            icon={item.icon}
+          >
             {item.text}
           </MenuItem>
         ))}
