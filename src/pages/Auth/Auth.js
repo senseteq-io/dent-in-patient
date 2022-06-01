@@ -8,9 +8,11 @@ import LoginWithEmail from './LoginWithEmail'
 import PATHS from '../paths'
 import SignUpWithEmail from './SignUpWithEmail'
 import Signup from './Signup'
+import VippsCallback from './VippsCallback'
 
 const {
   LOGIN,
+  VIPPS_LOGIN_CALLBACK,
   LOGIN_WITH_EMAIL,
   SIGNUP,
   SIGNUP_WITH_EMAIL,
@@ -20,6 +22,12 @@ const {
 
 const routes = [
   { key: 'LOGIN', path: LOGIN, component: Login, exact: true },
+  {
+    key: 'VIPPS_LOGIN_CALLBACK',
+    path: VIPPS_LOGIN_CALLBACK,
+    component: VippsCallback,
+    exact: true
+  },
   { key: 'SIGNUP', path: SIGNUP, component: Signup, exact: true },
   {
     key: 'FORGOT_PASSWORD',

@@ -7,6 +7,7 @@ const PATHS = {
   },
   UNAUTHENTICATED: {
     LOGIN: '/auth',
+    VIPPS_LOGIN_CALLBACK: '/auth/vipps-callback',
     LOGIN_WITH_EMAIL: '/auth/login-with-email',
     SIGNUP: '/auth/signup',
     SIGNUP_WITH_EMAIL: '/auth/sign-up-with-email',
