@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { urlParamsToObject } from '../../utils'
 import { useVippsLogin } from '../../hooks'
-import { Col, PageWrapper, Row, Text } from '@qonsoll/react-design'
+import { Col, PageWrapper, Row } from '@qonsoll/react-design'
 import { Spin } from 'antd'
 
 const VippsCallback = () => {
@@ -37,12 +37,6 @@ const VippsCallback = () => {
       <Row h="center">
         <Col cw="12" mb={3}>
           <Spin size="large" spinning />
-        </Col>
-        <Col cw="6">
-          <Text textAlign="center" color="var(--ql-color-white-t-lighten1)">
-            Your account is being verified, please wait, the process will not
-            take more than 10 seconds
-          </Text>
         </Col>
       </Row>
     </PageWrapper>
