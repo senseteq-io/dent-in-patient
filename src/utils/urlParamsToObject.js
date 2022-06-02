@@ -9,7 +9,7 @@ const urlParamsToObject = (searchString) => {
 
   // second parameter to JSON parse specifies how to convert JSON object
   // as some values can be encoded - we decode them with native function
-  JSON.parse(
+  return JSON.parse(
     '{"' + paramsString.replace(/&/g, '","').replace(/=/g, '":"') + '"}',
     function (key, value) {
       return key === '' ? value : decodeURIComponent(value)

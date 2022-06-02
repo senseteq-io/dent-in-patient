@@ -4,7 +4,7 @@ import firebase from 'firebase/compat/app'
 import PATHS from '../pages/paths'
 
 // Vipps login part variables
-const APP_URL = 'https://dent-in-prod.web.app'
+const APP_URL = 'https://dent-in-client-prod.web.app'
 const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
 const PROD_API_URL = 'https://us-central1-dent-in-prod.cloudfunctions.net'
 
@@ -13,7 +13,6 @@ const useVippsLogin = () => {
 
   const vippsLogin = async (urlParamsObject) => {
     const { code } = urlParamsObject
-
     const requestData = {
       code: code,
       redirectUri: APP_URL + VIPPS_LOGIN_CALLBACK
