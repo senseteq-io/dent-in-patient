@@ -35,8 +35,6 @@ const HeaderBreadcrumbs = () => {
       : collectionName
   )
 
-  console.log(modelName)
-
   const documentId = params[`${modelName}Id`]
 
   if (documentId) {

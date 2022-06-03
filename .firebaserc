@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "dent-in-prod"
+  },
+  "targets": {
+    "dent-in-prod": {
+      "hosting": {
+        "client": [
+          "dent-in-client-prod"
+        ]
+      }
+    }
+  }
+}
