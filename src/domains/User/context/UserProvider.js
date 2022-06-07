@@ -46,7 +46,7 @@ const UserProvider = ({ children }) => {
     /* If there is no user data in the database, save the user data to the database. */
     isNoUserDataInDB &&
       saveUserToDB({
-        id: user.uid,
+        _id: user.uid,
         email: user.email,
         avatarUrl: user.photoURL,
         agreement: true,

@@ -1,5 +1,6 @@
 import { COLLECTIONS } from '__constants__'
 import firebase from 'firebase/compat/app'
+import { serverTimestamp } from 'firebase/firestore'
 
 const { USERS } = COLLECTIONS
 
@@ -25,6 +26,7 @@ const updateEmailVerificationStatus = ({
       .collection(USERS)
       .doc(id)
       .update({
+        _updatedAt: serverTimestamp(),
         emailVerified: sessionUserEmailVerified
       })
       .catch((err) => {

@@ -1,5 +1,6 @@
 import { COLLECTIONS } from '__constants__'
 import firebase from 'firebase/compat/app'
+import { serverTimestamp } from 'firebase/firestore'
 
 const { USERS } = COLLECTIONS
 
@@ -12,7 +13,7 @@ const updateGDPRStatus = ({ id, gdpr, onError }) => {
   return firestore
     .collection(USERS)
     .doc(id)
-    .udpdate({ gdpr })
+    .update({ _updatedAt: serverTimestamp(), gdpr })
     .catch((err) => {
       onError && onError(err)
     })

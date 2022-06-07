@@ -1,5 +1,6 @@
 import { COLLECTIONS } from '__constants__'
 import firebase from 'firebase/compat/app'
+import { serverTimestamp } from 'firebase/firestore'
 
 const { USERS } = COLLECTIONS
 
@@ -7,13 +8,17 @@ const { USERS } = COLLECTIONS
  * Save the user's data to the database.
  * @returns A promise that resolves to the user object.
  */
-const saveUserToDB = ({ id, email, avatarUrl, agreement, gdpr, onError }) => {
+const saveUserToDB = ({ _id, email, avatarUrl, agreement, gdpr, onError }) => {
   const firestore = firebase.firestore()
   return firestore
     .collection(USERS)
-    .doc(id)
+    .doc(_id)
     .set({
-      id,
+      _id,
+      _createdBy: _id,
+      _updatedBy: _id,
+      _createdAt: serverTimestamp(),
+      _updatedAt: serverTimestamp(),
       email,
       emailVerified: false,
       agreement,
