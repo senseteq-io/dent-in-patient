@@ -36,6 +36,7 @@ const AccountMenu = ({ id, avatar, displayName, email }) => {
   return (
     <Account
       avatar={avatar}
+      short
       title={displayName || t('No name')}
       caption={email || t('No email')}
       isEllipsis
