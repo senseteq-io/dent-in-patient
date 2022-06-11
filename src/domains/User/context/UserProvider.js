@@ -113,7 +113,7 @@ const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        data: value,
+        user: value,
         loading: loading
       }}
     >
