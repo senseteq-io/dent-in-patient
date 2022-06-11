@@ -1,5 +1,8 @@
 const COLLECTIONS = {
-  USERS: 'users'
+  USERS: 'users',
+  BOOKINGS: 'bookings',
+  CLINICIANS: 'clinicians',
+  TREATMENTS: 'treatments'
 }
 
 export default COLLECTIONS

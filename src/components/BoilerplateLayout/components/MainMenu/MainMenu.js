@@ -16,6 +16,12 @@ const MainMenu = () => {
         icon: <DashboardFilled style={{ fontSize: '24px' }} />,
         text: t('Dashboard'),
         onClick: () => history.push('/dashboard')
+      },
+      {
+        value: 'BOOKINGS',
+        icon: <DashboardFilled style={{ fontSize: '24px' }} />,
+        text: t('Bookings'),
+        onClick: () => history.push('/bookings')
       }
     ],
     [t, history]
