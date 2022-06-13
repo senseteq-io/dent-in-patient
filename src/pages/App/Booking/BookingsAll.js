@@ -4,6 +4,9 @@ import { Container, PageWrapper, Text } from '@qonsoll/react-design'
 import { BookingList } from 'domains/Booking/components'
 import firebase from 'firebase/compat/app'
 import { useUser } from 'domains/User/context'
+import { COLLECTIONS } from '__constants__'
+
+const { BOOKINGS } = COLLECTIONS
 
 const BookingsAll = () => {
   const { user, loading } = useUser()
@@ -12,8 +15,9 @@ const BookingsAll = () => {
     user?._id &&
       firebase
         .firestore()
-        .collection('bookings')
+        .collection(BOOKINGS)
         .where('userId', '==', user?._id)
+        .orderBy('start', 'desc')
   )
 
   return (
@@ -23,7 +27,7 @@ const BookingsAll = () => {
       height="100%"
     >
       <Container height="100%">
-        {loading ? <Text>Loading...</Text> : null}
+        {loading ? <Text>Loading bookings...</Text> : null}
         {!bookingsLoading ? (
           <BookingList hideAddCard bookings={clientBookings} />
         ) : null}
