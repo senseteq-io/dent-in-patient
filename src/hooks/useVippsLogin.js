@@ -48,7 +48,7 @@ const useVippsLogin = () => {
           .signInWithCustomToken(data?.token)
         //update pending booking from widget
         await updateBooking({
-          vippsStateCode: state,
+          pendingBookingId: state,
           clientPhone: data?.phoneNumber,
           userId: user?.uid
         })
