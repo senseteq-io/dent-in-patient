@@ -85,8 +85,9 @@ const BoilerplateLayout = ({ children }) => {
               <Header
                 alignItems="center"
                 justifyContent="space-between"
-                bg="var(--ql-color-accent1)"
+                bg="var(--ql-color-white)"
                 color="white"
+                shadow="0 2px 20px 0px rgb(0 0 0 / 10%)"
               >
                 <Box onClick={() => history.push('/bookings')} cursor="pointer">
                   <Logo />
@@ -115,10 +116,10 @@ const BoilerplateLayout = ({ children }) => {
                           icon={
                             <Text
                               strong
-                              style={{
-                                fontSize: 16,
-                                color: 'var(--ql-color-white)'
-                              }}
+                              // style={{
+                              //   fontSize: 16
+                              // }}
+                              fontSize="var(--ql-font-size-body1)"
                               type="secondary"
                             >
                               {language}
@@ -137,7 +138,11 @@ const BoilerplateLayout = ({ children }) => {
         </LayoutSystemProvider>
       ) : (
         <LayoutSystemProvider {...layoutConfig}>
-          <Layout header={<LayoutHeader left={<Back />} center={<Logo />} />}>
+          <Layout
+            header={
+              <LayoutHeader left={<Back />} center={<Logo height="40" />} />
+            }
+          >
             {children}
           </Layout>
         </LayoutSystemProvider>
