@@ -20,7 +20,7 @@ const BookingList = (props) => {
     <Row
       onClick={onEmptySpaceClick}
       mx={-16}
-      height="100%"
+      height={!bookings?.length ? '100%' : 'auto'}
       v={!bookings?.length ? 'center' : 'top'}
     >
       {bookings?.length > 0 ? (
