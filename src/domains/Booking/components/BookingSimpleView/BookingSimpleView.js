@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Col,
   Container,
   Row,
@@ -21,6 +22,7 @@ import firebase from 'firebase/compat/app'
 import moment from 'moment'
 import { useDocumentDataOnce } from 'react-firebase-hooks/firestore'
 import { useHistory } from 'react-router-dom'
+import { Popconfirm } from 'antd'
 
 const blockSelectStyles = { userSelect: 'none', cursor: 'pointer' }
 
@@ -250,6 +252,33 @@ const BookingSimpleView = (props) => {
                 >
                   {clinic?.address1}
                 </Title>
+              </Col>
+              <Col
+                cw="auto"
+                display="flex"
+                v="between"
+                flexDirection="row"
+                alignItems="end"
+                mt={2}
+              >
+                <Popconfirm
+                  okText="Yes"
+                  cancelText="No"
+                  // onCancel={handleCancel}
+                  okButtonProps={{ danger: true }}
+                  title={
+                    <Text
+                      variant="body1"
+                      style={{ fontWeight: '600', letterSpacing: '0.5px' }}
+                    >
+                      Cancel yours booking?
+                    </Text>
+                  }
+                >
+                  <Button block size="medium" danger type="text">
+                    Cancel
+                  </Button>
+                </Popconfirm>
               </Col>
             </Row>
           </Col>
