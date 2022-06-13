@@ -1,6 +1,6 @@
 :root {
   --ql-font-family-main: 'Open Sans', sans-serif;
-  --ql-font-family-headings: 'Montserrat Alternates', sans-serif;
+  --ql-font-family-headings: 'MuseoModerno', cursive;
 
   /* Outline */
   --ql-outline-color-danger:  var(--ql-color-danger-t-lighten4);
