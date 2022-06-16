@@ -8,7 +8,17 @@ const { USERS } = COLLECTIONS
  * Save the user's data to the database.
  * @returns A promise that resolves to the user object.
  */
-const saveUserToDB = ({ _id, email, avatarUrl, agreement, gdpr, onError }) => {
+const saveUserToDB = ({
+  _id,
+  email,
+  firstName,
+  lastName,
+  phoneNumber,
+  avatarUrl,
+  agreement,
+  gdpr,
+  onError
+}) => {
   const firestore = firebase.firestore()
   return firestore
     .collection(USERS)
@@ -23,7 +33,12 @@ const saveUserToDB = ({ _id, email, avatarUrl, agreement, gdpr, onError }) => {
       emailVerified: false,
       agreement,
       gdpr,
-      avatarUrl
+      avatarUrl,
+      firstName,
+      lastName,
+      isPhoneValid: null,
+      phoneNumber,
+      data: null
       // role
     })
     .catch((err) => {

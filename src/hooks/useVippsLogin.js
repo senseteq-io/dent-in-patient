@@ -2,7 +2,8 @@ import { notification } from 'antd'
 import { useHistory } from 'react-router-dom'
 import firebase from 'firebase/compat/app'
 import PATHS from '../pages/paths'
-import { updateBooking } from 'domains/Booking/helpers'
+import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
+import { updateUserDataAfterVippsAuth } from 'domains/User/helpers'
 
 // Vipps login part variables
 const APP_URL = 'https://dent-in-client-prod.web.app'
@@ -43,15 +44,23 @@ const useVippsLogin = () => {
         history.push('/auth')
       } else {
         //get user to from auth, to pass into booking update
-        const { user } = await firebase
+        const userAuthData = await firebase
           .auth()
           .signInWithCustomToken(data?.token)
+        const user = userAuthData.user
+
         //update pending booking from widget
-        await updateBooking({
+        await updateVippsBookingFromWidget({
           pendingBookingId: state,
           clientPhone: data?.phoneNumber,
           userId: user?.uid
         })
+        if (userAuthData.additionalUserInfo.isNewUser) {
+          updateUserDataAfterVippsAuth({
+            userId: user?.uid,
+            userData: data
+          })
+        }
         history.push('/auth')
       }
     } catch (error) {

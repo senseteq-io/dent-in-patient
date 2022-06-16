@@ -23,6 +23,7 @@ import moment from 'moment'
 import { useDocumentDataOnce } from 'react-firebase-hooks/firestore'
 import { useHistory } from 'react-router-dom'
 import { Popconfirm } from 'antd'
+import { useMemo } from 'react'
 
 const blockSelectStyles = { userSelect: 'none', cursor: 'pointer' }
 
@@ -55,8 +56,12 @@ const BookingSimpleView = (props) => {
   const handleEdit = () => history.push(`/bookings/${booking?._id}/edit`)
   const handleOpen = () => history.push(`/bookings/${booking?._id}`)
 
-  const start = moment(booking?.start).format('HH:mm')
-  const end = moment(booking?.end).format('HH:mm')
+  const start = useMemo(() => moment(booking?.start).format('HH:mm'), [booking])
+  const end = useMemo(() => moment(booking?.end).format('HH:mm'), [booking])
+  const isCancelButtonVisible = useMemo(
+    () => moment(booking?.start).isAfter(moment()),
+    [booking]
+  )
 
   return (
     <CardDropdown handleEdit={handleEdit}>
@@ -253,33 +258,35 @@ const BookingSimpleView = (props) => {
                   {clinic?.address1}
                 </Title>
               </Col>
-              <Col
-                cw="auto"
-                display="flex"
-                v="between"
-                flexDirection="row"
-                alignItems="end"
-                mt={2}
-              >
-                <Popconfirm
-                  okText="Yes"
-                  cancelText="No"
-                  // onCancel={handleCancel}
-                  okButtonProps={{ danger: true }}
-                  title={
-                    <Text
-                      variant="body1"
-                      style={{ fontWeight: '600', letterSpacing: '0.5px' }}
-                    >
-                      Cancel yours booking?
-                    </Text>
-                  }
+              {isCancelButtonVisible && (
+                <Col
+                  cw="auto"
+                  display="flex"
+                  v="between"
+                  flexDirection="row"
+                  alignItems="end"
+                  mt={2}
                 >
-                  <Button block size="medium" danger type="text">
-                    Cancel
-                  </Button>
-                </Popconfirm>
-              </Col>
+                  <Popconfirm
+                    okText="Yes"
+                    cancelText="No"
+                    // onCancel={handleCancel}
+                    okButtonProps={{ danger: true }}
+                    title={
+                      <Text
+                        variant="body1"
+                        style={{ fontWeight: '600', letterSpacing: '0.5px' }}
+                      >
+                        Cancel yours booking?
+                      </Text>
+                    }
+                  >
+                    <Button block size="medium" danger type="text">
+                      Cancel
+                    </Button>
+                  </Popconfirm>
+                </Col>
+              )}
             </Row>
           </Col>
         </Row>

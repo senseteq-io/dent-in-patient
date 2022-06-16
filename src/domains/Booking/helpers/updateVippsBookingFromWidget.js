@@ -5,7 +5,11 @@ import { COLLECTIONS } from '__constants__'
 
 const { BOOKINGS } = COLLECTIONS
 
-const updateBooking = async ({ pendingBookingId, clientPhone, userId }) => {
+const updateVippsBookingFromWidget = async ({
+  pendingBookingId,
+  clientPhone,
+  userId
+}) => {
   // Update status of pending booking, add user id and phone
   if (pendingBookingId && userId) {
     await firebase
@@ -17,9 +21,9 @@ const updateBooking = async ({ pendingBookingId, clientPhone, userId }) => {
         _isUpdated: true,
         status: BOOKED_STATUS,
         userId,
-        phone: clientPhone ? `${clientPhone}` : null
+        phone: clientPhone ? `+${clientPhone}` : null
       })
   }
 }
 
-export default updateBooking
+export default updateVippsBookingFromWidget

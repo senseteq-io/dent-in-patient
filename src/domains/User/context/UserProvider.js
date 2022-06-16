@@ -6,8 +6,8 @@ import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useDocumentDataOnce } from 'react-firebase-hooks/firestore'
-import { useEffect } from 'react'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { useEffect, useState } from 'react'
 import { useHandleError } from 'hooks'
 
 const UserProvider = ({ children }) => {
@@ -17,12 +17,14 @@ const UserProvider = ({ children }) => {
 
   /* Using the useGDPRStatus hook to get the GDPR status of the user. */
   const gdpr = useGDPRStatus()
+  // need this state to prevent overwriting user data when login with google
+  const [artificialLoading, setArtificialLoading] = useState(true)
 
   /* Using the useAuthState hook to get the user from the firebase auth state. */
   const [user] = useAuthState(firebase.auth())
 
   /* If the user is logged in, fetch the user's data from Firestore. */
-  const [value, loading, error] = useDocumentDataOnce(
+  const [value, loading, error] = useDocumentData(
     user && firebase.firestore().collection('users').doc(user?.uid),
     {
       snapshotListenOptions: { includeMetadataChanges: true }
@@ -38,22 +40,40 @@ const UserProvider = ({ children }) => {
     updateGDPRStatus
   } = useSessionActions()
 
+  // Manage artificial loading state to prevent user data overwrites
+  useEffect(() => {
+    if (user && loading) {
+      setArtificialLoading(false)
+    }
+    if (!user && !artificialLoading) {
+      setArtificialLoading(true)
+    }
+  }, [user, loading, artificialLoading])
+
   // Initial user saving to the DB
   useEffect(() => {
     // Check if there are user data in the DB
-    const isNoUserDataInDB = user && !value && !loading
-
+    // when user login we have auth record in useAuth state, but there is a little delay before user data fetch start
+    // so in this case we have non empty user, no value and no loading state, and condition without artificial loading
+    // pass to setting user data from google that overwrite old data
+    // after adding artificial loading there is all ok
+    const isNoUserDataInDB = !artificialLoading && user && !value && !loading
     /* If there is no user data in the database, save the user data to the database. */
-    isNoUserDataInDB &&
+    if (isNoUserDataInDB) {
+      const [firstName, lastName] = user?.displayName?.split(' ')
       saveUserToDB({
         _id: user.uid,
         email: user.email,
         avatarUrl: user.photoURL,
         agreement: true,
+        firstName,
+        lastName,
+        phoneNumber: user.phoneNumber || null,
         gdpr,
         onError: handleError
       })
-  }, [saveUserToDB, handleError, user, value, loading, gdpr])
+    }
+  }, [saveUserToDB, handleError, user, value, loading, gdpr, artificialLoading])
 
   // Updating user's email verification status
   useEffect(() => {

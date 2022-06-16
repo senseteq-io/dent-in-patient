@@ -1,1 +1,1 @@
-export { default as updateBooking } from './updateBooking'
+export { default as updateVippsBookingFromWidget } from './updateVippsBookingFromWidget'
