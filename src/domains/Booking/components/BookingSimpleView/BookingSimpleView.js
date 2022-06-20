@@ -11,26 +11,37 @@ import {
 import {
   CalendarOutlined,
   ClockCircleOutlined,
+  DownOutlined,
   EnvironmentOutlined,
+  FileAddOutlined,
   MedicineBoxOutlined
 } from '@ant-design/icons'
+import { StyledCollapse, StyledPanel } from './BookingSimpleView.styled'
+import {
+  useCollectionData,
+  useDocumentDataOnce
+} from 'react-firebase-hooks/firestore'
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
+import { Popconfirm } from 'antd'
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
 import moment from 'moment'
-import { useDocumentDataOnce } from 'react-firebase-hooks/firestore'
-import { useHistory } from 'react-router-dom'
-import { Popconfirm } from 'antd'
+// import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
+import { useTranslations } from 'contexts/Translation'
 
-const blockSelectStyles = { userSelect: 'none', cursor: 'pointer' }
+const blockSelectStyles = {
+  userSelect: 'none',
+  cursor: 'pointer',
+  height: '100%'
+}
 
 const BookingSimpleView = (props) => {
   const { booking } = props
-
-  const history = useHistory()
+  // const history = useHistory()
+  const { t } = useTranslations()
 
   const [clinician] = useDocumentDataOnce(
     firebase
@@ -53,8 +64,8 @@ const BookingSimpleView = (props) => {
       .doc(booking?.clinicId?.toString())
   )
 
-  const handleEdit = () => history.push(`/bookings/${booking?._id}/edit`)
-  const handleOpen = () => history.push(`/bookings/${booking?._id}`)
+  // const handleEdit = () => history.push(`/bookings/${booking?._id}/edit`)
+  // const handleOpen = () => history.push(`/bookings/${booking?._id}`)
 
   const start = useMemo(() => moment(booking?.start).format('HH:mm'), [booking])
   const end = useMemo(() => moment(booking?.end).format('HH:mm'), [booking])
@@ -62,42 +73,58 @@ const BookingSimpleView = (props) => {
     () => moment(booking?.start).isAfter(moment()),
     [booking]
   )
-
+  const bookingAddons = props?.booking?.addons
+  const [addons] = useCollectionData(
+    bookingAddons?.length &&
+      firebase
+        .firestore()
+        .collection('treatments')
+        .doc(treatment?._id?.toString())
+        .collection('treatmentsAddons')
+        .where('_id', 'in', bookingAddons)
+  )
+  const checkAddonsAmount =
+    addons?.length > 0 ? (
+      <Text display="flex" alignItems="center">
+        {addons?.length}
+        <DownOutlined style={{ fontSize: '10px' }} />
+      </Text>
+    ) : (
+      '-'
+    )
   return (
-    <CardDropdown handleEdit={handleEdit}>
-      <Container style={blockSelectStyles} onDoubleClick={handleOpen} py="12px">
-        <Row>
-          <Col justifyContent="center" cw={12}>
-            <Row noGutters h="between" mb={3}>
+    <CardDropdown
+    // temporary disabled - not sure or pacient has permission to edit
+    // handleEdit={handleEdit}
+    >
+      <Container
+        style={blockSelectStyles}
+        // temporary disabled - not sure or pacient has permission to edit
+        // onDoubleClick={handleOpen}
+        py="12px"
+      >
+        <Row height="100%">
+          <Col justifyContent="space-between" height="100%" cw={12}>
+            <Row noGutters h="between">
+              {/* booking name */}
               <Col>
-                <Title
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  maxWidth="250px"
-                  whiteSpace="nowrap"
-                  level={4}
-                >
+                <Title wordBreak="break-word" level={4}>
                   {treatment?.name}
                 </Title>
               </Col>
+              {/* booking price  */}
               <Col cw="auto">
-                <Title
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  maxWidth="250px"
-                  whiteSpace="nowrap"
-                  variant="h5"
-                >
+                <Title wordBreak="break-word" variant="h5">
                   {props?.booking?.price},-
                 </Title>
               </Col>
             </Row>
 
-            <Row noGutters mb={3}>
+            <Row noGutters my={4} flexDirection="column">
               <Col flexWrap="nowrap" flexDirection="row" h="center">
                 <Avatar
                   mr={3}
-                  size="32px"
+                  size="40px"
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
@@ -110,6 +137,14 @@ const BookingSimpleView = (props) => {
                   src={clinician?.avatarUrl}
                 />
                 <Box display="flex" flexDirection="column">
+                  <Title
+                    style={{ fontWeight: '300' }}
+                    level={5}
+                    wordBreak="break-word"
+                    mb={0}
+                  >
+                    {clinician?.name}
+                  </Title>
                   <Text
                     textTransform="uppercase"
                     variant="caption2"
@@ -118,23 +153,76 @@ const BookingSimpleView = (props) => {
                   >
                     {clinician?.title}
                   </Text>
-                  <Title
-                    style={{ fontWeight: '300' }}
-                    level={5}
-                    display="flex"
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    maxWidth="250px"
-                    whiteSpace="nowrap"
-                    mb={0}
-                  >
-                    {clinician?.name}
-                  </Title>
                 </Box>
               </Col>
             </Row>
 
-            <Row noGutters mb={2} flexDirection="column" h="center">
+            <Row noGutters mb={3} flexDirection="column" style={{ gap: '8px' }}>
+              {/* Addons */}
+              <Col>
+                <StyledCollapse
+                  ghost
+                  bordered="false"
+                  style={{
+                    width: '100%'
+                  }}
+                >
+                  <StyledPanel
+                    extra={checkAddonsAmount}
+                    showArrow="false"
+                    expandIconPosition="start"
+                    header={
+                      <Box display="flex" flexDirection="row" width="100%">
+                        <FileAddOutlined />
+                        <Text
+                          ml={2}
+                          variant="body2"
+                          color="var(--ql-color-black-t-lighten2)"
+                          style={{
+                            fontWeight: '600',
+                            letterSpacing: '0.5px'
+                          }}
+                        >
+                          {t('Addons:')}
+                        </Text>
+                      </Box>
+                    }
+                  >
+                    {addons?.length > 0 ? (
+                      <Box>
+                        {addons?.map((addon) => (
+                          <Title
+                            key={addon.name}
+                            fontSize="14px"
+                            style={{
+                              fontWeight: '300',
+                              letterSpacing: '0.5px',
+                              wordBreak: 'break-word'
+                            }}
+                            level={5}
+                            ml={2}
+                          >
+                            {addon?.title}
+                          </Title>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Title
+                        fontSize="14px"
+                        style={{
+                          fontWeight: '300',
+                          letterSpacing: '0.5px',
+                          wordBreak: 'break-word'
+                        }}
+                        level={5}
+                        ml={2}
+                      >
+                        {t('No addons')}
+                      </Title>
+                    )}
+                  </StyledPanel>
+                </StyledCollapse>
+              </Col>
               <Col
                 display="flex"
                 v="between"
@@ -220,10 +308,10 @@ const BookingSimpleView = (props) => {
                   fontSize="14px"
                   style={{ fontWeight: '300', letterSpacing: '0.5px' }}
                   level={5}
+                  textAlign="right"
                   overflow="hidden"
-                  textOverflow="ellipsis"
-                  maxWidth="250px"
-                  whiteSpace="nowrap"
+                  maxWidth={['250px', '350px']}
+                  wordBreak="break-word"
                 >
                   {clinic?.name}
                 </Title>
@@ -258,9 +346,11 @@ const BookingSimpleView = (props) => {
                   {clinic?.address1}
                 </Title>
               </Col>
+            </Row>
+            <Row>
               {isCancelButtonVisible && (
                 <Col
-                  cw="auto"
+                  cw="12"
                   display="flex"
                   v="between"
                   flexDirection="row"

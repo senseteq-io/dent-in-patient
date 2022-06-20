@@ -15,19 +15,19 @@ const BookingList = (props) => {
 
   const onCreateButtonClick = () => history.push('/booking/create')
   const onEmptySpaceClick = () => setSelectedItem(null)
-
+  const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   return (
     <Row
       onClick={onEmptySpaceClick}
       mx={-16}
-      height={!bookings?.length ? '100%' : 'auto'}
-      v={!bookings?.length ? 'center' : 'top'}
+      // height={!bookings?.length ? '100%' : 'auto'}
+      // v={!bookings?.length ? 'center' : 'top'}
     >
       {bookings?.length > 0 ? (
         <>
           {!props?.hideAddCard && (
             <AddItemCard
-              cardWidth={props?.listView ? 12 : [12, 6, 4]}
+              cardWidth={checkRenderConditions}
               message="Add booking"
               onClickAction={
                 props?.isListWithCreate
@@ -37,11 +37,7 @@ const BookingList = (props) => {
             />
           )}
           {bookings?.map((booking, index) => (
-            <Col
-              key={booking?._id || index}
-              cw={props?.listView ? 12 : [12, 6, 4]}
-              flex={1}
-            >
+            <Col key={booking?._id || index} cw={checkRenderConditions}>
               <Card
                 onContextMenu={(e) => e.preventDefault()}
                 onClick={(e) => {
@@ -49,7 +45,12 @@ const BookingList = (props) => {
                   e.stopPropagation()
                   setSelectedItem(booking?._id)
                 }}
-                bodyStyle={{ padding: '8px 0px', borderRadius: '12px' }}
+                bodyStyle={{
+                  padding: '8px 0px',
+                  borderRadius: '12px',
+                  width: '100%',
+                  height: '100%'
+                }}
                 style={{
                   backgroundColor:
                     booking?._id === selectedItem
@@ -59,7 +60,10 @@ const BookingList = (props) => {
                   borderColor:
                     booking?._id === selectedItem
                       ? 'var(--ql-color-accent1-t-lighten4)'
-                      : 'transparent'
+                      : 'transparent',
+                  height: '100%',
+                  alignItems: 'center',
+                  display: 'flex'
                 }}
                 mb={32}
               >
