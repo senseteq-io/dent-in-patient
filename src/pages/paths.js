@@ -23,8 +23,10 @@ const PATHS = {
   AUTHENTICATED: {
     DASHBOARD: '/dashboard',
     BOOKINGS: '/bookings',
+    NEXT_BOOKING: '/next-booking',
     USER_SHOW: '/users/:id',
-    USER_EDIT: '/users/:id/edit'
+    USER_EDIT: '/users/:id/edit',
+    SET_NEW_PASSWORD: '/user/set-new-password'
   }
 }
 
