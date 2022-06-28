@@ -5,6 +5,7 @@ import {
   googleLogin,
   login,
   resetPassword,
+  completeNewPassword,
   saveUserToDB,
   sendEmailVerification,
   setSessionToLocalStorage,
@@ -24,6 +25,7 @@ const useSessionActions = () => {
     updateEmailVerificationStatus,
     updateGDPRStatus,
     resetPassword,
+    completeNewPassword,
     setSessionToLocalStorage,
     getLastSessionFromLocalStorage,
     getLastSessionProvider
