@@ -7,7 +7,7 @@ import {
   Text
 } from '@qonsoll/react-design'
 
-import { BookingAdvancedView } from 'domains/Booking/components'
+import { BookingNextSimpleView } from 'domains/Booking/components'
 import { Spin } from 'antd'
 import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
@@ -23,7 +23,7 @@ const BookingShow = () => {
   const goToBookings = () => {
     history.push('/bookings')
   }
-
+  console.log('nextBookingData', nextBookingData)
   const title = useMemo(
     () =>
       bookingLoading || nextBookingData
@@ -50,13 +50,28 @@ const BookingShow = () => {
           </Row>
         ) : null}
         {!bookingLoading && nextBookingData ? (
-          <BookingAdvancedView
+          // <BookingAdvancedView
+          //   treatmentName={nextBookingData?.treatmentName}
+          //   treatmentDuration={nextBookingData?.treatmentDuration}
+          //   price={nextBookingData?.price}
+          //   date={nextBookingData?.date}
+          //   startTime={nextBookingData?.startTime}
+          //   clinicianName={nextBookingData?.clinicianName}
+          //   clinicAddress={nextBookingData?.clinicAddress}
+          //   addons={nextBookingData?.addons}
+          // />
+          <BookingNextSimpleView
             treatmentName={nextBookingData?.treatmentName}
             treatmentDuration={nextBookingData?.treatmentDuration}
             price={nextBookingData?.price}
             date={nextBookingData?.date}
             startTime={nextBookingData?.startTime}
+            endTime={nextBookingData?.endTime}
             clinicianName={nextBookingData?.clinicianName}
+            clinicianTitle={nextBookingData?.clinicianTitle}
+            clinicianAvatarUrl={nextBookingData?.clinicianAvatarUrl}
+            clinicName={nextBookingData?.clinicName}
+            clinicCity={nextBookingData?.clinicCity}
             clinicAddress={nextBookingData?.clinicAddress}
             addons={nextBookingData?.addons}
           />
