@@ -12,7 +12,9 @@ import { useTranslations } from 'contexts/Translation'
 
 // import { useUser } from 'domains/User/context' // uncomment this part if you want to use this hook
 
-const unauthenticatedPaths = Object.values(PATHS.UNAUTHENTICATED)
+const unauthenticatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
+  (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
+)
 
 const RoutesRedirect = ({ children }) => {
   const { t } = useTranslations()
