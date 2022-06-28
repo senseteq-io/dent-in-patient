@@ -33,6 +33,9 @@
   --ql-menu-group-title-color: var(--ql-color-dark-t-lighten2);
   --ql-menu-group-title-padding: 8px 24px;
 
+  /* Form */
+  --ql-form-message-color: var(--ql-color-danger-t-lighten1);
+
   /* Account */
   --ql-account-avatar-box-shadow-hover: inset 0 0 0 2px var(--ql-color-accent1);
 
