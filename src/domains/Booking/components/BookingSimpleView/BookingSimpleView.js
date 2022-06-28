@@ -16,6 +16,7 @@ import {
   FileAddOutlined,
   MedicineBoxOutlined
 } from '@ant-design/icons'
+import { Popconfirm, notification } from 'antd'
 import { StyledCollapse, StyledPanel } from './BookingSimpleView.styled'
 import {
   useCollectionData,
@@ -24,7 +25,6 @@ import {
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
-import { Popconfirm } from 'antd'
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
 import moment from 'moment'
@@ -32,11 +32,13 @@ import moment from 'moment'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
-const blockSelectStyles = {
-  userSelect: 'none',
-  cursor: 'pointer',
-  height: '100%'
-}
+// const blockSelectStyles = {
+//   userSelect: 'none',
+//   cursor: 'pointer',
+//   height: '100%'
+// }
+
+const PROD_API_URL = process.env.PROD_API_URL
 
 const BookingSimpleView = (props) => {
   const { booking } = props
@@ -63,7 +65,36 @@ const BookingSimpleView = (props) => {
       .collection('clinics')
       .doc(booking?.clinicId?.toString())
   )
+  const [addons] = useCollectionData(
+    booking?.addons?.length &&
+      firebase
+        .firestore()
+        .collection('treatments')
+        .doc(treatment?._id?.toString())
+        .collection('treatmentsAddons')
+        .where('_id', 'in', booking?.addons)
+  )
 
+  const handleBookingCancel = async () => {
+    const response = await fetch(PROD_API_URL + `/bookings/${booking?._id}`, {
+      method: 'DELETE',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.ok) {
+      notification.success({
+        message: 'Success',
+        description: 'Booking cancelled'
+      })
+    } else {
+      notification.error({
+        message: 'Error',
+        description: 'Server responded with 404, cannot complete operation'
+      })
+    }
+  }
   // const handleEdit = () => history.push(`/bookings/${booking?._id}/edit`)
   // const handleOpen = () => history.push(`/bookings/${booking?._id}`)
 
@@ -73,19 +104,15 @@ const BookingSimpleView = (props) => {
     () => moment(booking?.start).isAfter(moment()),
     [booking]
   )
-  const bookingAddons = props?.booking?.addons
-  const [addons] = useCollectionData(
-    bookingAddons?.length &&
-      firebase
-        .firestore()
-        .collection('treatments')
-        .doc(treatment?._id?.toString())
-        .collection('treatmentsAddons')
-        .where('_id', 'in', bookingAddons)
-  )
+
   const checkAddonsAmount =
     addons?.length > 0 ? (
-      <Text display="flex" alignItems="center">
+      <Text
+        display="flex"
+        alignItems="center"
+        width="28px"
+        justifyContent="space-between"
+      >
         {addons?.length}
         <DownOutlined style={{ fontSize: '10px' }} />
       </Text>
@@ -98,7 +125,7 @@ const BookingSimpleView = (props) => {
     // handleEdit={handleEdit}
     >
       <Container
-        style={blockSelectStyles}
+        // style={blockSelectStyles}
         // temporary disabled - not sure or pacient has permission to edit
         // onDoubleClick={handleOpen}
         py="12px"
@@ -360,7 +387,7 @@ const BookingSimpleView = (props) => {
                   <Popconfirm
                     okText="Yes"
                     cancelText="No"
-                    // onCancel={handleCancel}
+                    onCancel={handleBookingCancel}
                     okButtonProps={{ danger: true }}
                     title={
                       <Text
