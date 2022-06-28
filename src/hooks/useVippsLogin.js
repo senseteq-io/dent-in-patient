@@ -2,13 +2,11 @@ import { notification } from 'antd'
 import { useHistory } from 'react-router-dom'
 import firebase from 'firebase/compat/app'
 import PATHS from '../pages/paths'
-import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
-import { updateUserDataAfterVippsAuth } from 'domains/User/helpers'
 
 // Vipps login part variables
-const APP_URL = 'https://dent-in-client-prod.web.app'
+const APP_URL = process.env.REACT_APP_URL
 const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
-const PROD_API_URL = 'https://us-central1-dent-in-prod.cloudfunctions.net'
+const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
 const useVippsLogin = () => {
   const history = useHistory()
@@ -44,24 +42,11 @@ const useVippsLogin = () => {
         history.push('/auth')
       } else {
         //get user to from auth, to pass into booking update
-        const userAuthData = await firebase
+        const { user } = await firebase
           .auth()
           .signInWithCustomToken(data?.token)
-        const user = userAuthData.user
 
-        //update pending booking from widget
-        await updateVippsBookingFromWidget({
-          pendingBookingId: state,
-          clientPhone: data?.phoneNumber,
-          userId: user?.uid
-        })
-        if (userAuthData.additionalUserInfo.isNewUser) {
-          updateUserDataAfterVippsAuth({
-            userId: user?.uid,
-            userData: data
-          })
-        }
-        history.push('/auth')
+        return { userId: user?.uid, ...data, bookingId: state }
       }
     } catch (error) {
       notification.error({
