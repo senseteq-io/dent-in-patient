@@ -2,7 +2,9 @@ const COLLECTIONS = {
   USERS: 'users',
   BOOKINGS: 'bookings',
   CLINICIANS: 'clinicians',
-  TREATMENTS: 'treatments'
+  CLINICS: 'clinics',
+  TREATMENTS: 'treatments',
+  TREATMENTS_ADDONS: 'treatmentsAddons'
 }
 
 export default COLLECTIONS
