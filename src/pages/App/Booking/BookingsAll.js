@@ -1,15 +1,19 @@
-import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { Container, PageWrapper, Text } from '@qonsoll/react-design'
+import { Button, Container, PageWrapper, Text } from '@qonsoll/react-design'
 
 import { BookingList } from 'domains/Booking/components'
-import firebase from 'firebase/compat/app'
-import { useUser } from 'domains/User/context'
 import { COLLECTIONS } from '__constants__'
+import firebase from 'firebase/compat/app'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { useHistory } from 'react-router-dom'
+import { useTranslations } from 'contexts/Translation'
+import { useUser } from 'domains/User/context'
 
 const { BOOKINGS } = COLLECTIONS
 
 const BookingsAll = () => {
+  const history = useHistory()
   const { user, loading } = useUser()
+  const { t } = useTranslations()
 
   const [clientBookings, bookingsLoading, error] = useCollectionData(
     user?._id &&
@@ -20,10 +24,17 @@ const BookingsAll = () => {
         .orderBy('start', 'desc')
   )
 
+  const goToNextBookingPage = () => {
+    history.push('/next-booking')
+  }
+
   return (
     <PageWrapper
       headingProps={{ title: 'Bookings', titleSize: 2 }}
       contentWidth={['100%', '80%', '70%', '50%', '40%']}
+      action={
+        <Button onClick={goToNextBookingPage}>{t('Show next booking')}</Button>
+      }
       height="100%"
     >
       <Container height="100%">
