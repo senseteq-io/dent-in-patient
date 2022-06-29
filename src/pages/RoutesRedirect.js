@@ -9,8 +9,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useEffect } from 'react'
 import { useHandleError } from 'hooks'
 import { useTranslations } from 'contexts/Translation'
-
-// import { useUser } from 'domains/User/context' // uncomment this part if you want to use this hook
+import { useUser } from 'domains/User/context' // uncomment this part if you want to use this hook
 
 const unauthenticatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
   (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
@@ -21,8 +20,8 @@ const RoutesRedirect = ({ children }) => {
   const history = useHistory()
   const location = useLocation()
   const handleError = useHandleError()
-  const [user, loading, error] = useAuthState(firebase.auth())
-  // const user = useUser() // uncomment this part if you need to add extra conditions based on data from the DB
+  const [userAuth, authLoading, error] = useAuthState(firebase.auth())
+  const { user, loading, artificialLoading } = useUser() // uncomment this part if you need to add extra conditions based on data from the DB
 
   // Making decision how to redirect
   useEffect(() => {
@@ -30,20 +29,39 @@ const RoutesRedirect = ({ children }) => {
     const isUnauthenticatedPath = unauthenticatedPaths.includes(
       location.pathname
     )
-
     /* If the user is logged in, and the user's email is verified, then the user is logged in. */
-    const isEmailNotVerified = user && !user.emailVerified
+    const usersNextBookingExist = !loading && user?.nextBooking?._id
+    const isEmailNotVerified = userAuth && !userAuth.emailVerified
     const isLoggedIn =
-      isUnauthenticatedPath && user && !loading && !isEmailNotVerified
-    const isLoggedOut = !isUnauthenticatedPath && !user && !loading
+      isUnauthenticatedPath &&
+      userAuth &&
+      !authLoading &&
+      !artificialLoading &&
+      user?._id &&
+      !loading &&
+      !isEmailNotVerified
+    const isLoggedOut = !isUnauthenticatedPath && !userAuth && !authLoading
 
     /* If the user is logged in, redirect to the config page. If the user is logged out, redirect to
     the logout page. If the user's email is not verified, redirect to the email confirmation page.
     */
-    isLoggedIn && history.push(PATHS.CONFIG.AFTER_LOGIN)
+    isLoggedIn &&
+      usersNextBookingExist &&
+      history.push(PATHS.CONFIG.AFTER_LOGIN_WITH_BOOKING)
+    isLoggedIn &&
+      !usersNextBookingExist &&
+      history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
     isLoggedOut && history.push(PATHS.CONFIG.AFTER_LOGOUT)
     isEmailNotVerified && history.push(PATHS.UNAUTHENTICATED.CONFIRM_EMAIL)
-  }, [history, user, loading, location.pathname])
+  }, [
+    history,
+    userAuth,
+    authLoading,
+    location.pathname,
+    user,
+    loading,
+    artificialLoading
+  ])
 
   // Session fetching error handling
   useEffect(() => {
@@ -52,7 +70,7 @@ const RoutesRedirect = ({ children }) => {
 
   return (
     <>
-      {loading ? (
+      {authLoading || loading ? (
         <Box
           height="100%"
           display="flex"
