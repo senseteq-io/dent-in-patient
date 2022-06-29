@@ -18,7 +18,9 @@ const useNextBooking = () => {
 
   //! STRING DATE INSIDE MOMENT SHOULD BE REMOVED AFTER TESTING AND ALL FIXES
   const currentDateFormatted = useMemo(
-    () => moment('2022-06-10').format('YYYY-MM-DDTHH:mm:ss'),
+    // () => moment('2022-06-10').format('YYYY-MM-DDTHH:mm:ss'),
+    () => moment().format('YYYY-MM-DDTHH:mm:ss'),
+
     []
   )
 
@@ -36,19 +38,18 @@ const useNextBooking = () => {
           .orderBy('start')
           .limit(1)
     )
-
   // Compute client booking by getting first booking from the collection
   const clientBooking = useMemo(() => {
     const bookingData = nextBooking?.[0]
 
     if (bookingData) {
+      console.log(bookingData?.price)
       return {
         ...bookingData,
         price:
-          (typeof bookingData?.price === 'number' && !bookingData?.price) ||
-          bookingData?.price
+          typeof bookingData?.price === 'number' && !bookingData?.price
             ? 'free'
-            : bookingData?.price
+            : `${bookingData?.price},-`
       }
     }
     return {}
