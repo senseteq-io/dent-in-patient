@@ -82,7 +82,7 @@ const BookingShow = () => {
             <Col>
               <Card
                 bodyStyle={{
-                  padding: '8px 0',
+                  padding: '8px',
                   borderRadius: '12px',
                   width: '100%',
                   height: '100%'

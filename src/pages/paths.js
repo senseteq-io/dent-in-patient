@@ -1,9 +1,9 @@
 const PATHS = {
   CONFIG: {
     DEFAULT: '/auth',
-    AFTER_LOGIN: '/bookings',
+    AFTER_LOGIN: '/next-booking',
     AFTER_LOGOUT: '/auth',
-    AFTER_SIGNUP: '/bookings'
+    AFTER_SIGNUP: '/next-booking'
   },
   UNAUTHENTICATED: {
     LOGIN: '/auth',
@@ -22,8 +22,8 @@ const PATHS = {
   },
   AUTHENTICATED: {
     DASHBOARD: '/dashboard',
-    BOOKINGS: '/bookings',
     NEXT_BOOKING: '/next-booking',
+    BOOKINGS: '/bookings',
     USER_SHOW: '/users/:id',
     USER_EDIT: '/users/:id/edit',
     SET_NEW_PASSWORD: '/user/set-new-password'
