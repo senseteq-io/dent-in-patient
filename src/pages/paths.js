@@ -1,9 +1,10 @@
 const PATHS = {
   CONFIG: {
     DEFAULT: '/auth',
-    AFTER_LOGIN: '/next-booking',
+    AFTER_LOGIN_WITH_BOOKING: '/next-booking',
+    AFTER_LOGIN_WITHOUT_BOOKING: '/bookings',
     AFTER_LOGOUT: '/auth',
-    AFTER_SIGNUP: '/next-booking'
+    AFTER_SIGNUP: '/bookings'
   },
   UNAUTHENTICATED: {
     LOGIN: '/auth',

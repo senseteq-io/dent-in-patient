@@ -1,15 +1,21 @@
 import 'firebase/compat/firestore'
 
+import {
+  useCollectionData,
+  useDocumentData
+} from 'react-firebase-hooks/firestore'
+import { useEffect, useMemo, useState } from 'react'
 import { useGDPRStatus, useSessionActions } from 'domains/Session/hooks'
 
+import { COLLECTIONS } from '__constants__'
 import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
+import moment from 'moment'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { useEffect, useState } from 'react'
 import { useHandleError } from 'hooks'
 
+const { BOOKINGS } = COLLECTIONS
 const UserProvider = ({ children }) => {
   /* The above code is a function that takes in a callback function as an argument.
   The callback function is then called with the error as an argument. */
@@ -31,6 +37,29 @@ const UserProvider = ({ children }) => {
     }
   )
 
+  const currentDateFormatted = useMemo(
+    // () => moment('2022-06-10').format('YYYY-MM-DDTHH:mm:ss'),
+    () => moment().format('YYYY-MM-DDTHH:mm:ss'),
+
+    []
+  )
+
+  // Get booking Data by userId and filtered by start date
+  const [fetchedBookings, bookingLoading, bookingError] = useCollectionData(
+    user?.uid &&
+      firebase
+        .firestore()
+        .collection(BOOKINGS)
+        .where('userId', '==', user?.uid)
+        //! 'PENDING' SHOULD BE REPLACED TO {BOOKED_STATUS} AFTER TESTING AND FIXING ALL BUGS
+        .where('status', '==', 'PENDING')
+        .where('start', '>=', currentDateFormatted)
+        .orderBy('start')
+        .limit(1)
+  )
+  // Compute client booking by getting first booking from the collection
+  const nextBooking = useMemo(() => fetchedBookings?.[0], [fetchedBookings])
+
   // Session methods
   const {
     updateEmailVerificationStatus,
@@ -42,13 +71,13 @@ const UserProvider = ({ children }) => {
 
   // Manage artificial loading state to prevent user data overwrites
   useEffect(() => {
-    if (user && loading) {
+    if (user && bookingLoading) {
       setArtificialLoading(false)
     }
     if (!user && !artificialLoading) {
       setArtificialLoading(true)
     }
-  }, [user, loading, artificialLoading])
+  }, [user, bookingLoading, artificialLoading])
 
   // Initial user saving to the DB
   useEffect(() => {
@@ -133,8 +162,9 @@ const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        user: value,
-        loading: loading
+        user: { ...value, nextBooking, bookingError },
+        loading: loading || bookingLoading,
+        artificialLoading
       }}
     >
       {children}
