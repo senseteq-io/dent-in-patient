@@ -404,7 +404,7 @@ const BookingSimpleView = (props) => {
                     <Popconfirm
                       okText="Yes"
                       cancelText="No"
-                      onCancel={handleBookingCancel}
+                      onConfirm={handleBookingCancel}
                       okButtonProps={{ danger: true }}
                       title={
                         <Text
