@@ -1,13 +1,16 @@
 import { Box, Button, Col, Input, Link, Row } from '@qonsoll/react-design'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLastSession, useSessionActions } from 'domains/Session/hooks'
 
+// import { COLLECTIONS } from '__constants__'
 import { Form } from 'antd'
 import { LastSessionUser } from 'domains/Session/components'
 import PropTypes from 'prop-types'
-// import { Input } from 'antd'
-import { useQueryParams } from 'hooks'
+// import { getDocument } from 'services/firestore'
+import { getURLParameterValue } from 'utils'
 import { useTranslations } from 'contexts/Translation'
+
+// const { USERS } = COLLECTIONS
 
 const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
   const { t } = useTranslations()
@@ -20,31 +23,62 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
   const { getLastSessionProvider } = useSessionActions()
   const [form] = Form.useForm()
 
-  // [CLEAN_FUNCTIONS]
-  const isEmailExists = useQueryParams('email')
+  //[COMPUTED PROPERTIES]
+  const clientEmail = useMemo(() => getURLParameterValue('email'), [])
+  const clientPassword = useMemo(() => getURLParameterValue('password'), [])
+  // const clientId = useMemo(() => getURLParameterValue('userId'), [])
+  const sessionProvider = getLastSessionProvider()
 
+  const isLastSessionVisible = useMemo(
+    () => !!clientEmail && !clientPassword && sessionProvider === 'email',
+    [clientEmail, clientPassword, sessionProvider]
+  )
+
+  const isPasswordAutoFocusEnabled = useMemo(
+    () => !!clientEmail && !clientPassword,
+    [clientEmail, clientPassword]
+  )
+
+  const isEmailFieldVisible = useMemo(
+    () => clientEmail && sessionProvider === 'email',
+    [clientEmail, sessionProvider]
+  )
+
+  // [CLEAN_FUNCTIONS]
   const onFinish = async (credentials) => {
-    /* Setting the loading state to true, then calling the login function, then setting the loading
-    state to false. */
     setLoading(true)
-    login({ credentials, onError })
+    await login({ credentials, onError })
+    // const userData = await getDocument(USERS, clientId)
+
     setLoading(false)
   }
 
   useEffect(() => {
     /* This code is setting the email field to the lastSession email if it exists. */
-    if (lastSession.email) {
+    if (lastSession.email && !clientPassword) {
       form.setFieldsValue({ email: lastSession.email })
     }
-  }, [form, lastSession.email])
+  }, [clientPassword, form, lastSession.email])
 
-  const sessionProvider = getLastSessionProvider()
+  //listen history change and set initial value from url params and auto login user
+  useEffect(() => {
+    if (clientEmail && clientPassword) {
+      //set values from url params to form items
+      form.setFieldsValue({ email: clientEmail })
+      form.setFieldsValue({ password: clientPassword })
+
+      //submit form to auto login user
+      onFinish({ email: clientEmail, password: clientPassword })
+    }
+    //Disable unnecessary dependency warning for onFinish function
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, clientEmail, clientPassword])
 
   return (
     <Form form={form} onFinish={onFinish} {...rest}>
       <Form.Item
         name="email"
-        hidden={isEmailExists && sessionProvider === 'email'}
+        hidden={isEmailFieldVisible}
         normalize={(value) => value.trim()}
         rules={[
           {
@@ -56,7 +90,7 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
       >
         <Input size="large" autoFocus placeholder={t('Email')} />
       </Form.Item>
-      {isEmailExists && sessionProvider === 'email' && (
+      {isLastSessionVisible && (
         <LastSessionUser vertical lastSession={lastSession} />
       )}
       <Form.Item
@@ -68,7 +102,7 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
       >
         <Input.Password
           size="large"
-          autoFocus={isEmailExists}
+          autoFocus={isPasswordAutoFocusEnabled}
           placeholder={t('Password')}
         />
       </Form.Item>

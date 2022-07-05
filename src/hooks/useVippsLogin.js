@@ -1,12 +1,13 @@
+import PATHS from '../pages/paths'
+import firebase from 'firebase/compat/app'
 import { notification } from 'antd'
 import { useHistory } from 'react-router-dom'
-import firebase from 'firebase/compat/app'
-import PATHS from '../pages/paths'
 
 // Vipps login part variables
 const APP_URL = process.env.REACT_APP_URL
 const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
 const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
+const AUTH_MARKER = 'auth'
 
 const useVippsLogin = () => {
   const history = useHistory()
@@ -14,9 +15,14 @@ const useVippsLogin = () => {
   const vippsLogin = async (urlParamsObject) => {
     const { code, state } = urlParamsObject
 
+    // For in app vipps auth add marker 'auth' to state
+    // to differentiate from auth from widget and skip booking update
+    const [inAppAuthMarker] = state.split('_') // state is in the form of auth_<userID>
+    const isAuth = inAppAuthMarker === AUTH_MARKER
+
     const requestData = {
       code: code,
-      redirectUri: APP_URL + VIPPS_LOGIN_CALLBACK
+      redirectUri: `${APP_URL}${VIPPS_LOGIN_CALLBACK}`
     }
 
     const requestBodyParametersFormatted = JSON.stringify(requestData)
@@ -46,7 +52,12 @@ const useVippsLogin = () => {
           .auth()
           .signInWithCustomToken(data?.token)
 
-        return { userId: user?.uid, ...data, bookingId: state }
+        return {
+          userId: user?.uid,
+          ...data,
+          bookingId: isAuth ? null : state,
+          isAuth
+        }
       }
     } catch (error) {
       notification.error({

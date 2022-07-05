@@ -1,4 +1,4 @@
-const useQueryParams = (variable) => {
+const getURLParameterValue = (variable) => {
   const query = window.location.search.substring(1)
   const vars = query.split('&')
   for (var i = 0; i < vars.length; i++) {
@@ -9,4 +9,4 @@ const useQueryParams = (variable) => {
   }
 }
 
-export default useQueryParams
+export default getURLParameterValue

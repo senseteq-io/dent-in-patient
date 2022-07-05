@@ -1,15 +1,16 @@
+import { Col, PageWrapper, Row } from '@qonsoll/react-design'
 import { useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
-import { urlParamsToObject } from '../../utils'
-import { useVippsLogin } from '../../hooks'
-import { PageWrapper, Row, Col } from '@qonsoll/react-design'
+
+import PATHS from '../paths'
 import { Spin } from 'antd'
 import { UserSimpleForm } from 'domains/User/components'
+import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
+import { urlParamsToObject } from '../../utils'
+import { useHistory } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
-import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
-import PATHS from '../paths'
+import { useVippsLogin } from '../../hooks'
 
 const { AFTER_LOGIN } = PATHS.CONFIG
 
@@ -35,7 +36,7 @@ const VippsCallback = () => {
   }, [urlParamsObject, vippsLogin, isLoginCalled, history])
 
   useEffect(() => {
-    if (user?.data && dataFromVipps?.bookingId) {
+    if (user?.data && dataFromVipps?.bookingId && !dataFromVipps?.isAuth) {
       //update pending booking from widget
       updateVippsBookingFromWidget({
         pendingBookingId: dataFromVipps.bookingId,
@@ -53,20 +54,20 @@ const VippsCallback = () => {
 
   const pageTitle = useMemo(
     () =>
-      dataFromVipps?.additionalUserInfo?.isNewUser
+      user?.data
         ? t('Profile data')
         : `${t('Processing Vipps authorization')}...`,
-    [t, dataFromVipps]
+    [t, user]
   )
 
   const pageSubtitle = useMemo(
     () =>
-      dataFromVipps?.additionalUserInfo?.isNewUser
+      user?.data
         ? t('Please, give us your personal number info and ')
         : t(
             'Your account is being verified, please wait, the process will not take more than 10 seconds'
           ),
-    [t, dataFromVipps]
+    [t, user]
   )
 
   return (
@@ -80,10 +81,8 @@ const VippsCallback = () => {
       }}
       contentWidth={['100%', '100%', 400]}
     >
-      {user?.data ? (
-        <UserSimpleForm
-          initialValues={{ uid: 'UmsJeAqB8UPeIcVQmAxZnp6F6ut2' }}
-        />
+      {!user?.data ? (
+        <UserSimpleForm initialValues={dataFromVipps} />
       ) : (
         <Row h="center">
           <Col cw={12}>

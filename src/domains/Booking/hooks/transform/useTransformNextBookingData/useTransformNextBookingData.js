@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 const useTransformNextBookingData = () => {
   const { nextBookingData, bookingLoading, bookingError } =
     useGetNextBookingData()
-  // console.log('nextBookingData===>', nextBookingData)
   const bookingDateTransformed = useMemo(
     () =>
       nextBookingData?.date &&

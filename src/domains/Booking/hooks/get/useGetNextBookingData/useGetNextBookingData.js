@@ -43,7 +43,6 @@ const useNextBooking = () => {
     const bookingData = nextBooking?.[0]
 
     if (bookingData) {
-      console.log(bookingData?.price)
       return {
         ...bookingData,
         price:

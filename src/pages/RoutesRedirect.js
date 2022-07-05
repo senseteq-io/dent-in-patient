@@ -5,12 +5,14 @@ import PATHS from './paths'
 import PropTypes from 'prop-types'
 import { Spinner } from 'components'
 import firebase from 'firebase/compat/app'
+import { getAuth } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useEffect } from 'react'
 import { useHandleError } from 'hooks'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context' // uncomment this part if you want to use this hook
 
+const PASSWORD_AUTH_PROVIDER = 'password'
 const unauthenticatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
   (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
 )
@@ -31,28 +33,29 @@ const RoutesRedirect = ({ children }) => {
     )
     /* If the user is logged in, and the user's email is verified, then the user is logged in. */
     const usersNextBookingExist = !loading && user?.nextBooking?._id
-    const isEmailNotVerified = userAuth && !userAuth.emailVerified
+    const isLoadingCombined = authLoading || artificialLoading || loading
+    const isTemporaryPasswordNotResolved =
+      getAuth()?.currentUser?.providerData?.[0]?.providerId ===
+        PASSWORD_AUTH_PROVIDER && !user?.isTemporaryPasswordResolved
     const isLoggedIn =
-      isUnauthenticatedPath &&
-      userAuth &&
-      !authLoading &&
-      !artificialLoading &&
-      user?._id &&
-      !loading &&
-      !isEmailNotVerified
+      isUnauthenticatedPath && userAuth && !isLoadingCombined && user?._id
     const isLoggedOut = !isUnauthenticatedPath && !userAuth && !authLoading
 
     /* If the user is logged in, redirect to the config page. If the user is logged out, redirect to
     the logout page. If the user's email is not verified, redirect to the email confirmation page.
     */
     isLoggedIn &&
+      isTemporaryPasswordNotResolved &&
+      history.push(PATHS.AUTHENTICATED.SET_NEW_PASSWORD)
+    isLoggedIn &&
+      !isTemporaryPasswordNotResolved &&
       usersNextBookingExist &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITH_BOOKING)
     isLoggedIn &&
       !usersNextBookingExist &&
+      !isTemporaryPasswordNotResolved &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
     isLoggedOut && history.push(PATHS.CONFIG.AFTER_LOGOUT)
-    isEmailNotVerified && history.push(PATHS.UNAUTHENTICATED.CONFIRM_EMAIL)
   }, [
     history,
     userAuth,

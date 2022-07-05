@@ -45,7 +45,7 @@ const Login = () => {
         authTypeText="Login"
         googleAuth={googleLogin}
         redirectToFormWithEmail={redirectToLoginWithEmail}
-        authSwitchText={t('Dont have account') + '?'}
+        authSwitchText={t('Do not have account') + '?'}
         authSwitchLinktext={t('Sign up')}
         authSwitchPath={PATHS.UNAUTHENTICATED.SIGNUP}
         lastSession={lastSession}

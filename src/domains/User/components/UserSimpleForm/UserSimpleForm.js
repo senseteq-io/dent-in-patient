@@ -1,9 +1,11 @@
-import { Form, Button, Input, notification } from 'antd'
+import { Button, Form, Input, notification } from 'antd'
+
+import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
-import { useTranslations } from 'contexts/Translation'
-import { useHistory } from 'react-router-dom'
-import { useUserFormValidators } from 'domains/User/hooks'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
+import { useHistory } from 'react-router-dom'
+import { useTranslations } from 'contexts/Translation'
+import { useUserFormValidators } from 'domains/User/hooks'
 
 const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
@@ -30,7 +32,7 @@ const UserSimpleForm = (props) => {
 
     try {
       // update user using our backend API
-      await fetch(PROD_API_URL + `/user/${initialValues?._id}`, {
+      await fetch(PROD_API_URL + `/user/${initialValues?.userId}`, {
         method: 'PATCH',
         cache: 'no-cache',
         headers: {
@@ -38,14 +40,16 @@ const UserSimpleForm = (props) => {
         },
         body: JSON.stringify(userDataToUpdate)
       })
-      // update pending booking from widget
-      updateVippsBookingFromWidget({
-        pendingBookingId: initialValues?.bookingId,
-        clientPhone: userPhoneFormatted,
-        userId: initialValues?._id
-      })
+      if (!initialValues?.isAuth && initialValues?.bookingId) {
+        // update pending booking from widget
+        await updateVippsBookingFromWidget({
+          pendingBookingId: initialValues?.bookingId,
+          clientPhone: userPhoneFormatted,
+          userId: initialValues?.userId
+        })
+      }
 
-      history.push('/bookings')
+      history.push(PATHS.CONFIG.AFTER_LOGIN)
     } catch (e) {
       console.error('Error occurred during saving profile data. ', e.message)
       notification.error({

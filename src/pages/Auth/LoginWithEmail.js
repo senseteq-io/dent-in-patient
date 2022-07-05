@@ -1,8 +1,8 @@
-import { useHandleError, useQueryParams } from 'hooks'
-
 import { LoginForm } from 'domains/Session/components'
 import PATHS from 'pages/paths'
 import { PageWrapper } from '@qonsoll/react-design'
+import { getURLParameterValue } from 'utils'
+import { useHandleError } from 'hooks'
 import { useHistory } from 'react-router-dom'
 import { useSessionActions } from 'domains/Session/hooks'
 import { useTranslations } from 'contexts/Translation'
@@ -18,7 +18,7 @@ const LoginWithEmail = () => {
   // [CLEAN_FUNCTIONS]
   const redirectToForgotPassword = () =>
     history.push(PATHS.UNAUTHENTICATED.FORGOT_PASSWORD)
-  const isEmailExists = useQueryParams('email')
+  const isEmailExists = getURLParameterValue('email')
 
   const sessionProvider = getLastSessionProvider()
 

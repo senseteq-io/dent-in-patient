@@ -36,7 +36,7 @@ import moment from 'moment'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
-const PROD_API_URL = process.env.PROD_API_URL
+const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
 const BookingSimpleView = (props) => {
   const { booking } = props

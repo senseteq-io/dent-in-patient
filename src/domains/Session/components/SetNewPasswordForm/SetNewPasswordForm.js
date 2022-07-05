@@ -2,9 +2,11 @@ import { Box, Button, Col, Row } from '@qonsoll/react-design'
 import { Form, Input, Spin } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
+import PATHS from 'pages/paths'
 import { PasswordStrengthIndicator } from 'components'
 import PropTypes from 'prop-types'
 import { notification } from 'antd'
+import { useHistory } from 'react-router-dom'
 import { useSessionActions } from 'domains/Session/hooks'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
@@ -14,6 +16,7 @@ const SetNewPasswordForm = (props) => {
   const { initialValues } = props
 
   // [ADDITIONAL HOOKS]
+  const history = useHistory()
   const { t } = useTranslations()
   const [form] = Form.useForm()
   const ref = useRef()
@@ -35,10 +38,17 @@ const SetNewPasswordForm = (props) => {
       setIsFormProcessing(true)
 
       // add user new password to give possibility login with email (request to backend)
-      await completeNewPassword({
+      const { data } = await completeNewPassword({
         password,
+        userEmail: user?.email,
         userId: user?._id
       })
+      if (data === 'success') {
+        const nextRoute = user?.nextBooking?._id
+          ? PATHS.CONFIG.AFTER_LOGIN_WITH_BOOKING
+          : PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING
+        history.push(nextRoute)
+      }
     } catch (error) {
       const errorMessageComputed = error?.toString()
       console.error(errorMessageComputed)
@@ -99,7 +109,6 @@ const SetNewPasswordForm = (props) => {
         </Box>
         <Form.Item
           name="password"
-          // label={t('Password')}
           extra={<PasswordStrengthIndicator level={pswrdStrengthLevel} />}
           rules={[
             { required: true, message: t('Password is required') },
@@ -119,7 +128,6 @@ const SetNewPasswordForm = (props) => {
           dependencies={['password']}
           name="passwordConfirmation"
           style={{ marginBottom: 0 }}
-          // label={t('Confirm password')}
           rules={[
             {
               required: true,

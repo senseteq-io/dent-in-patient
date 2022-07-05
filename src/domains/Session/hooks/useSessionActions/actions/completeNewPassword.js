@@ -1,19 +1,16 @@
 import firebase from 'firebase/compat/app'
 import { notification } from 'antd'
+import { updateDocument } from 'services/firestore'
 
-const PROD_API_URL = process.env.PROD_API_URL
+const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
-const completeNewPassword = ({ password, userId }) => {
-  //parse url params
-  const urlParams = new URLSearchParams(window.location.search)
-  const userEmail = urlParams.get('identifier')
+const completeNewPassword = ({ password, userEmail, userId }) => {
   const requestData = {
     paswd: password
   }
   const requestBodyParametersFormatted = JSON.stringify(requestData)
-
-  // for users with temporary password issue)
-  return fetch(PROD_API_URL + `/user/${userId}/change`, {
+  // update users temporary password to real password
+  return fetch(PROD_API_URL + `/users/${userId}/change`, {
     method: 'POST',
     cache: 'no-cache',
     headers: {
@@ -34,7 +31,7 @@ const completeNewPassword = ({ password, userId }) => {
       }
     })
     .then((res) => {
-      if (res && res.statusCode === 200) {
+      if (res?.data === 'success') {
         // making force login with new password underhood
         firebase
           .auth()
@@ -46,10 +43,10 @@ const completeNewPassword = ({ password, userId }) => {
               placement: 'topRight'
             })
           })
+        updateDocument('users', userId, { isTemporaryPasswordResolved: true })
       } else {
         console.log(res)
       }
-
       return res
     })
     .catch((error) => {
