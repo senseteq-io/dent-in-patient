@@ -92,7 +92,6 @@ const BookingList = (props) => {
                         booking?._id === selectedItem
                           ? 'var(--ql-color-accent1-t-lighten4)'
                           : 'transparent',
-                      height: '100%',
                       alignItems: 'center',
                       display: 'flex'
                     }}
