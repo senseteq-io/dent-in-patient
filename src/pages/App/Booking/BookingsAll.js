@@ -1,62 +1,27 @@
 import { Button, Container, PageWrapper, Text } from '@qonsoll/react-design'
 
 import { BookingList } from 'domains/Booking/components'
-import { COLLECTIONS } from '__constants__'
-import firebase from 'firebase/compat/app'
-import moment from 'moment'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { useGetBookings } from '../../../domains/Booking/hooks/get'
 import { useHistory } from 'react-router-dom'
-import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 
-const { BOOKINGS } = COLLECTIONS
-
 const BookingsAll = () => {
   const history = useHistory()
-  const { user, loading } = useUser()
+  const { loading } = useUser()
   const { t } = useTranslations()
-  const currentDateFormatted = useMemo(
-    // () => moment('2022-06-10').format('YYYY-MM-DDTHH:mm:ss'),
-    () => moment().format('YYYY-MM-DDTHH:mm:ss'),
 
-    []
-  )
-  const [clientFutureBookings, futureBookingsLoading, futureBookingError] =
-    useCollectionData(
-      user?._id &&
-        firebase
-          .firestore()
-          .collection(BOOKINGS)
-          .where('userId', '==', user?._id)
-          .where('status', 'in', ['PENDING', 'BOOKED'])
-          .where('start', '>=', currentDateFormatted)
-          .orderBy('start', 'desc')
-    )
-  const [clientPassedBookings, passedBookingsLoading, passedBookingError] =
-    useCollectionData(
-      user?._id &&
-        firebase
-          .firestore()
-          .collection(BOOKINGS)
-          .where('userId', '==', user?._id)
-          .where('status', 'in', ['PENDING', 'BOOKED'])
-          .where('start', '<=', currentDateFormatted)
-          .orderBy('start', 'desc')
-    )
   const [
+    clientFutureBookings,
+    futureBookingsLoading,
+    futureBookingError,
+    clientPassedBookings,
+    passedBookingsLoading,
+    passedBookingError,
     clientCanceledBookings,
     canceledBookingsLoading,
     canceledBookingError
-  ] = useCollectionData(
-    user?._id &&
-      firebase
-        .firestore()
-        .collection(BOOKINGS)
-        .where('userId', '==', user?._id)
-        .where('status', '==', 'CANCELED')
-        .orderBy('start', 'desc')
-  )
+  ] = useGetBookings()
   const goToNextBookingPage = () => {
     history.push('/next-booking')
   }
@@ -76,7 +41,7 @@ const BookingsAll = () => {
         {!futureBookingsLoading ? (
           <BookingList
             hideAddCard
-            title={t('Active bookings')}
+            title={t('Future bookings')}
             bookings={clientFutureBookings}
           />
         ) : null}
