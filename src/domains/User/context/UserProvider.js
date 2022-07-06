@@ -158,7 +158,6 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     error && handleError(error)
   }, [error, handleError])
-
   return (
     <UserContext.Provider
       value={{
