@@ -73,7 +73,7 @@ const LoginMethods = (props) => {
           prompt: 'select_account'
         },
         clientId:
-          '1044286479835-daqk42j1p13jedivjpn6akp3cgfbvfm6.apps.googleusercontent.com'
+          '664849237841-vcog9pfld92qp0ofr5v67c1a4h0anggm.apps.googleusercontent.com'
       }
     ],
     callbacks: {
