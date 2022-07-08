@@ -11,7 +11,7 @@ import {
 import IllustrationNotFound from 'assets/NotFound.svg'
 import { ThemeProvider } from 'styled-components'
 import breakpoints from '../../styles/breakpoints'
-import logoQonsoll from 'assets/logo-ql-full-primary.svg'
+import logoDentIn from 'assets/logo-dentin-light.svg'
 import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 
@@ -27,8 +27,8 @@ const NotFound = () => {
       <LayoutSystemProvider {...layoutConfig}>
         <Layout>
           <Img
-            src={logoQonsoll}
-            alt="Qonsoll"
+            src={logoDentIn}
+            alt="Dent in"
             height="40"
             position="absolute"
             top={16}
