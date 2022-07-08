@@ -74,9 +74,6 @@ const UserProvider = ({ children }) => {
     if (user && bookingLoading) {
       setArtificialLoading(false)
     }
-    if (!user && !artificialLoading) {
-      setArtificialLoading(true)
-    }
   }, [user, bookingLoading, artificialLoading])
 
   // Initial user saving to the DB
