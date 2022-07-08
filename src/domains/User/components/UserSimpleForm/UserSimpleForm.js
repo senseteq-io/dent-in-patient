@@ -19,14 +19,11 @@ const UserSimpleForm = (props) => {
     useUserFormValidators()
 
   const onSubmitUser = async (userData) => {
-    const userPhoneFormatted = initialValues?.phoneNumber
-      ? `+${initialValues?.phoneNumber}`
-      : null
     const userDataToUpdate = {
       firstName: userData?.firstName,
       lastName: userData?.lastName,
       postalCode: userData?.postalCode,
-      phone: userPhoneFormatted,
+      phone: initialValues?.phoneNumber,
       nin: userData?.personalNumber
     }
 
@@ -44,12 +41,12 @@ const UserSimpleForm = (props) => {
         // update pending booking from widget
         await updateVippsBookingFromWidget({
           pendingBookingId: initialValues?.bookingId,
-          clientPhone: userPhoneFormatted,
+          clientPhone: initialValues?.phoneNumber,
           userId: initialValues?.userId
         })
       }
 
-      history.push(PATHS.CONFIG.AFTER_LOGIN)
+      history.push(PATHS.UNAUTHENTICATED.LOGIN)
     } catch (e) {
       console.error('Error occurred during saving profile data. ', e.message)
       notification.error({
