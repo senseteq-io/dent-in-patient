@@ -8,19 +8,25 @@ import { useEffect, useMemo, useState } from 'react'
 import { useGDPRStatus, useSessionActions } from 'domains/Session/hooks'
 
 import { COLLECTIONS } from '__constants__'
+import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
 import moment from 'moment'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHandleError } from 'hooks'
+import { useLocation } from 'react-router-dom'
 
 const { BOOKINGS } = COLLECTIONS
+const unauthentificatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
+  (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
+)
+
 const UserProvider = ({ children }) => {
   /* The above code is a function that takes in a callback function as an argument.
   The callback function is then called with the error as an argument. */
   const handleError = useHandleError()
-
+  const location = useLocation()
   /* Using the useGDPRStatus hook to get the GDPR status of the user. */
   const gdpr = useGDPRStatus()
   // need this state to prevent overwriting user data when login with google
@@ -59,6 +65,10 @@ const UserProvider = ({ children }) => {
   )
   // Compute client booking by getting first booking from the collection
   const nextBooking = useMemo(() => fetchedBookings?.[0], [fetchedBookings])
+  const isUnauthenticatedPath = useMemo(
+    () => unauthentificatedPaths.includes(location.pathname),
+    [location.pathname]
+  )
 
   // Session methods
   const {
@@ -74,7 +84,10 @@ const UserProvider = ({ children }) => {
     if (user && bookingLoading) {
       setArtificialLoading(false)
     }
-  }, [user, bookingLoading, artificialLoading])
+    if (!user && !bookingLoading && isUnauthenticatedPath) {
+      setArtificialLoading(true)
+    }
+  }, [user, bookingLoading, artificialLoading, isUnauthenticatedPath])
 
   // Initial user saving to the DB
   useEffect(() => {
@@ -83,17 +96,21 @@ const UserProvider = ({ children }) => {
     // so in this case we have non empty user, no value and no loading state, and condition without artificial loading
     // pass to setting user data from google that overwrite old data
     // after adding artificial loading there is all ok
-    const isNoUserDataInDB = !artificialLoading && user && !value && !loading
+    const isNoUserDataInDB =
+      !artificialLoading && user && !value?.email && !loading
     /* If there is no user data in the database, save the user data to the database. */
     if (isNoUserDataInDB) {
-      const [firstName, lastName] = user?.displayName?.split(' ')
+      const [firstName, lastName] = user?.displayName?.split(' ') || [
+        null,
+        null
+      ]
       saveUserToDB({
         _id: user.uid,
         email: user.email,
         avatarUrl: user.photoURL,
         agreement: true,
-        firstName,
-        lastName,
+        firstName: firstName,
+        lastName: lastName,
         phoneNumber: user.phoneNumber || null,
         gdpr,
         onError: handleError
@@ -122,11 +139,12 @@ const UserProvider = ({ children }) => {
     const isUserDataLoaded = user && value && !loading
     if (isUserDataLoaded) {
       const lastSession = getLastSessionFromLocalStorage()
-      lastSession?.email !== user?.email &&
+      lastSession?.email &&
+        lastSession?.email !== user?.email &&
         /* Set the session to the user's local storage. */
         setSessionToLocalStorage({
-          email: user.email,
-          avatarUrl: user.photoURL,
+          email: user?.email,
+          avatarUrl: user?.photoURL,
           provider: localStorage.getItem('lastSessionProvider')
         })
     }
