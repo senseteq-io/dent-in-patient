@@ -6,6 +6,8 @@ import { BoilerplateLayout } from 'components'
 import Dashboard from './Dashboard/Dashboard'
 import PATHS from '../paths'
 import { SetNewPassword } from '../Auth'
+import firebase from 'firebase/compat/app'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 const {
   DASHBOARD,
@@ -36,9 +38,12 @@ const routes = [
 ]
 
 const App = () => {
+  const [userAuth] = useAuthState(firebase.auth())
+
   return (
     <BoilerplateLayout>
       <Switch>
+        {!userAuth && <Redirect to={PATHS.UNAUTHENTICATED.LOGIN} />}
         {routes.map((routeProps) => (
           <Route key={routeProps.key} {...routeProps} />
         ))}
