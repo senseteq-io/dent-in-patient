@@ -22,6 +22,7 @@ import firebase from 'firebase/compat/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
+import { useUser } from 'domains/User/context'
 
 const languages = [
   { title: 'English', shortCode: 'en' },
@@ -31,18 +32,17 @@ const languages = [
 const BoilerplateLayout = ({ children }) => {
   const history = useHistory()
   const location = useLocation()
-  const [user, loading] = useAuthState(firebase.auth())
+  const [userAuth] = useAuthState(firebase.auth())
   const { setCurrentLanguage, language } = useTranslations()
-
+  const { user } = useUser()
   /* If the user is authenticated, the component will render the children. Otherwise, it will render
   the fallback component. */
   const isAuthenticated = useMemo(
     () =>
-      user?.email &&
-      user?.emailVerified &&
-      !loading &&
+      userAuth?.uid &&
+      user?._id &&
       location.pathname !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK,
-    [user?.email, user?.emailVerified, loading, location]
+    [userAuth, user, location.pathname]
   )
 
   const changeLanguage = (shortCodeLanguage) => {
@@ -103,10 +103,10 @@ const BoilerplateLayout = ({ children }) => {
                   <Row noGutters v="center">
                     <Col cw="auto" pr={32}>
                       <AccountMenu
-                        id={user?.uid}
-                        avatar={user?.photoURL}
-                        displayName={user?.displayName}
-                        email={user?.email}
+                        id={userAuth?.uid}
+                        avatar={userAuth?.photoURL}
+                        displayName={userAuth?.displayName}
+                        email={userAuth?.email}
                       />
                     </Col>
                     <Col cw="auto">
