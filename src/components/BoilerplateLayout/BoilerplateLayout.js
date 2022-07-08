@@ -9,17 +9,19 @@ import {
   Row,
   Text
 } from '@qonsoll/react-design'
-import { useMemo } from 'react'
+// import moment from 'moment'
+import { Dropdown, Menu } from 'antd'
+import { useHistory, useLocation } from 'react-router-dom'
+
 import Back from '../Back'
+import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
 import { ThemeProvider } from 'styled-components'
 import breakpoints from '../../styles/breakpoints'
 import firebase from 'firebase/compat/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
-// import moment from 'moment'
-import { Menu, Dropdown } from 'antd'
-import { useHistory } from 'react-router-dom'
 
 const languages = [
   { title: 'English', shortCode: 'en' },
@@ -28,14 +30,19 @@ const languages = [
 
 const BoilerplateLayout = ({ children }) => {
   const history = useHistory()
+  const location = useLocation()
   const [user, loading] = useAuthState(firebase.auth())
   const { setCurrentLanguage, language } = useTranslations()
 
   /* If the user is authenticated, the component will render the children. Otherwise, it will render
   the fallback component. */
   const isAuthenticated = useMemo(
-    () => user?.email && user?.emailVerified && !loading,
-    [user?.email, user?.emailVerified, loading]
+    () =>
+      user?.email &&
+      user?.emailVerified &&
+      !loading &&
+      location.pathname !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK,
+    [user?.email, user?.emailVerified, loading, location]
   )
 
   const changeLanguage = (shortCodeLanguage) => {
