@@ -2,7 +2,8 @@ import firebase from 'firebase/compat/app'
 import { notification } from 'antd'
 import { updateDocument } from 'services/firestore'
 
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
+const DENT_IN_FUNCTIONS_API_URL =
+  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
 const completeNewPassword = ({ password, userEmail, userId }) => {
   const requestData = {
@@ -10,7 +11,7 @@ const completeNewPassword = ({ password, userEmail, userId }) => {
   }
   const requestBodyParametersFormatted = JSON.stringify(requestData)
   // update users temporary password to real password
-  return fetch(PROD_API_URL + `/users/${userId}/change`, {
+  return fetch(DENT_IN_FUNCTIONS_API_URL + `/users/${userId}/change`, {
     method: 'POST',
     cache: 'no-cache',
     headers: {

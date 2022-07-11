@@ -23,23 +23,15 @@ const VippsCallback = () => {
     [user, dataFromVipps]
   )
 
-  const pageTitle = useMemo(
-    () =>
-      isUserWithoutSSN
-        ? t('Profile data')
-        : `${t('Processing Vipps authorization')}...`,
-    [isUserWithoutSSN, t]
-  )
+  const pageTitle = isUserWithoutSSN
+    ? t('Profile data')
+    : `${t('Processing Vipps authorization')}...`
 
-  const pageSubtitle = useMemo(
-    () =>
-      isUserWithoutSSN
-        ? t('Please, enter your profile data to complete your booking')
-        : t(
-            'Your account is being verified, please wait, the process will not take more than 10 seconds'
-          ),
-    [isUserWithoutSSN, t]
-  )
+  const pageSubtitle = isUserWithoutSSN
+    ? t('Please, enter your profile data to complete your booking')
+    : t(
+        'Your account is being verified, please wait, the process will not take more than 10 seconds'
+      )
 
   return (
     <PageWrapper

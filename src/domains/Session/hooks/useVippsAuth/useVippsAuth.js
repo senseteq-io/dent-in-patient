@@ -37,38 +37,32 @@ const useVippsAuth = () => {
         errorDescription: t('Failed to get access token and data from vipps')
       })
 
-      // If no token in response, it means that user didn`t authorize
-      if (!data?.token) {
+      // Try to login user with auth token
+      try {
+        // If no token in response, it means that user didn`t authorize
+        if (!data?.token) {
+          throw new Error('No token in response')
+        }
+        const { user } = await firebase
+          .auth()
+          .signInWithCustomToken(data?.token)
+
+        // If user successfully logged in, parse user data from vipps and return for next steps
+        const userData = transformUserDataFromVipps({
+          user,
+          data,
+          isAuth,
+          state
+        })
+        return userData
+      } catch (error) {
         notification.error({
           message: 'Error',
-          description: t('The user is not authorized!'),
-          placement: 'topRight'
+          description: t('Can not login user!'),
+          data: error.message
         })
+        console.error(error)
         history.push('/auth')
-      } else {
-        // Try to login user with auth token
-        try {
-          const { user } = await firebase
-            .auth()
-            .signInWithCustomToken(data?.token)
-
-          // If user successfully logged in, parse user data from vipps and return for next steps
-          const userData = transformUserDataFromVipps({
-            user,
-            data,
-            isAuth,
-            state
-          })
-          return userData
-        } catch (error) {
-          notification.error({
-            message: 'Error',
-            description: t('Can not login user!'),
-            data: error.message
-          })
-          console.error(error)
-          history.push('/auth')
-        }
       }
     },
     [history, t]

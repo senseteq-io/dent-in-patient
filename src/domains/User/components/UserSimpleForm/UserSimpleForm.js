@@ -7,7 +7,8 @@ import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUserFormValidators } from 'domains/User/hooks'
 
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
+const DENT_IN_FUNCTIONS_API_URL =
+  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
 const UserSimpleForm = (props) => {
   const { initialValues } = props
@@ -29,14 +30,17 @@ const UserSimpleForm = (props) => {
 
     try {
       // update user using our backend API
-      await fetch(PROD_API_URL + `/user/${initialValues?.userId}`, {
-        method: 'PATCH',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userDataToUpdate)
-      })
+      await fetch(
+        DENT_IN_FUNCTIONS_API_URL + `/user/${initialValues?.userId}`,
+        {
+          method: 'PATCH',
+          cache: 'no-cache',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userDataToUpdate)
+        }
+      )
       if (!initialValues?.isAuth && initialValues?.bookingId) {
         // update pending booking from widget
         await updateVippsBookingFromWidget({

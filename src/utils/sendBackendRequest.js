@@ -1,6 +1,7 @@
 import { notification } from 'antd'
 
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
+const DENT_IN_FUNCTIONS_API_URL =
+  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
 const sendBackendRequest = async (
   endpoint,
@@ -18,7 +19,7 @@ const sendBackendRequest = async (
     const jsonBody = JSON.stringify(body)
 
     // Make api call with passed params
-    const response = await fetch(PROD_API_URL + endpoint, {
+    const response = await fetch(DENT_IN_FUNCTIONS_API_URL + endpoint, {
       method,
       cache: 'no-cache',
       headers: {

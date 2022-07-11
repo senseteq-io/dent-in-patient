@@ -36,7 +36,8 @@ import moment from 'moment'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
+const DENT_IN_FUNCTIONS_API_URL =
+  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
 const BookingSimpleView = (props) => {
   const { booking } = props
@@ -94,13 +95,16 @@ const BookingSimpleView = (props) => {
   )
 
   const handleBookingCancel = async () => {
-    const response = await fetch(PROD_API_URL + `/bookings/${booking?._id}`, {
-      method: 'DELETE',
-      cache: 'no-cache',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      DENT_IN_FUNCTIONS_API_URL + `/bookings/${booking?._id}`,
+      {
+        method: 'DELETE',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
     if (response.ok) {
       notification.success({
         message: 'Success',

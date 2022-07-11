@@ -32,8 +32,8 @@ const useVippsFlowBackgroundActions = () => {
       setIsLoginCalled(true)
       // Get user info from vipps, authorize to app if successfully get info
       // and save info to state for next steps
-      const _userAuthInfo = await vippsLogin(urlParamsObject)
-      setDataFromVipps(_userAuthInfo)
+      const userAuthInfo = await vippsLogin(urlParamsObject)
+      setDataFromVipps(userAuthInfo)
     }
     if (!isLoginCalled && urlParamsObject?.code) {
       processVippsLogin()
