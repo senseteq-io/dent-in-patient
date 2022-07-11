@@ -32,7 +32,7 @@ const UserSimpleForm = (props) => {
 
     try {
       // update user using our backend API
-      await fetch(PROD_API_URL + `/user/${initialValues?.userId}`, {
+      await fetch(PROD_API_URL + `/users/${initialValues?.userId}`, {
         method: 'PATCH',
         cache: 'no-cache',
         headers: {
