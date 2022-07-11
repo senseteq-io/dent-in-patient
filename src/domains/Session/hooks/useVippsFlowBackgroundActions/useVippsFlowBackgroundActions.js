@@ -6,14 +6,14 @@ import { notification } from 'antd'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
 import { urlParamsToObject } from 'utils'
 import { useUser } from 'domains/User/context'
-import { useVippsLogin } from 'hooks'
+import { useVippsAuth } from 'domains/Session/hooks'
 
 const { LOGIN } = PATHS.UNAUTHENTICATED
 
 const useVippsFlowBackgroundActions = () => {
   const history = useHistory()
   const location = useLocation()
-  const vippsLogin = useVippsLogin()
+  const vippsLogin = useVippsAuth()
   const { user } = useUser()
 
   // [COMPONENT_STATE_HOOKS]
