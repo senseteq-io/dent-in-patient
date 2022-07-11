@@ -30,7 +30,7 @@ const UserProvider = ({ children }) => {
   /* Using the useGDPRStatus hook to get the GDPR status of the user. */
   const gdpr = useGDPRStatus()
   // need this state to prevent overwriting user data when login with google
-  const [artificialLoading, setArtificialLoading] = useState(true)
+  const [userPreloading, setUserPreloading] = useState(true)
 
   /* Using the useAuthState hook to get the user from the firebase auth state. */
   const [user] = useAuthState(firebase.auth())
@@ -79,25 +79,25 @@ const UserProvider = ({ children }) => {
     updateGDPRStatus
   } = useSessionActions()
 
-  // Manage artificial loading state to prevent user data overwrites
+  // Manage user preloading loading state to prevent user data overwrites
   useEffect(() => {
     if (user && bookingLoading) {
-      setArtificialLoading(false)
+      setUserPreloading(false)
     }
     if (!user && !bookingLoading && isUnauthenticatedPath) {
-      setArtificialLoading(true)
+      setUserPreloading(true)
     }
-  }, [user, bookingLoading, artificialLoading, isUnauthenticatedPath])
+  }, [user, bookingLoading, userPreloading, isUnauthenticatedPath])
 
   // Initial user saving to the DB
   useEffect(() => {
     // Check if there are user data in the DB
-    // when user login we have auth record in useAuth state, but there is a little delay before user data fetch start
-    // so in this case we have non empty user, no value and no loading state, and condition without artificial loading
-    // pass to setting user data from google that overwrite old data
-    // after adding artificial loading there is all ok
+    // when user login we have auth record in useAuth state, there is a little delay before user data fetch start
+    // so in this case we have non empty user auth, no user data from DB and no loading state,
+    // and condition without user preloading pass to setting user data received from auth provider that overwrite user data
+    // after adding user preloading there is all ok
     const isNoUserDataInDB =
-      !artificialLoading && user && !value?.email && !loading
+      !userPreloading && user && !value?.email && !loading
     /* If there is no user data in the database, save the user data to the database. */
     if (isNoUserDataInDB) {
       const [firstName, lastName] = user?.displayName?.split(' ') || [
@@ -116,7 +116,7 @@ const UserProvider = ({ children }) => {
         onError: handleError
       })
     }
-  }, [saveUserToDB, handleError, user, value, loading, gdpr, artificialLoading])
+  }, [saveUserToDB, handleError, user, value, loading, gdpr, userPreloading])
 
   // Updating user's email verification status
   useEffect(() => {
@@ -177,8 +177,7 @@ const UserProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         user: { ...value, nextBooking, bookingError },
-        loading: loading || bookingLoading,
-        artificialLoading
+        loading: loading || bookingLoading
       }}
     >
       {children}
