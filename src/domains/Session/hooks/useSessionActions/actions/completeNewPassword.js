@@ -1,58 +1,50 @@
+import { COLLECTIONS } from '__constants__'
 import firebase from 'firebase/compat/app'
 import { notification } from 'antd'
+import { sendBackendRequest } from 'utils'
 import { updateDocument } from 'services/firestore'
 
-const DENT_IN_FUNCTIONS_API_URL =
-  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
-
-const completeNewPassword = ({ password, userEmail, userId }) => {
+const completeNewPassword = async ({
+  password,
+  userEmail,
+  userId,
+  errorDescription
+}) => {
   const requestData = {
     paswd: password
   }
-  const requestBodyParametersFormatted = JSON.stringify(requestData)
+
   // update users temporary password to real password
-  return fetch(DENT_IN_FUNCTIONS_API_URL + `/users/${userId}/change`, {
+  const updateClientPasswordResponse = await sendBackendRequest({
+    endpoint: `/users/${userId}/change`,
     method: 'POST',
-    cache: 'no-cache',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: requestBodyParametersFormatted
+    body: requestData,
+    errorDescription
   })
-    .then((response) => {
-      if (response.ok) {
-        return response.json()
-      } else {
+
+  if (updateClientPasswordResponse?.data === 'success') {
+    // making force login with new password underhood
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(userEmail, password)
+      .catch((error) => {
         notification.error({
           message: 'Error',
-          description: 'Server responded with 404, cannot complete operation',
+          description: error.message,
           placement: 'topRight'
         })
-        return null
-      }
+      })
+    updateDocument(COLLECTIONS.USERS, userId, {
+      isTemporaryPasswordResolved: true
     })
-    .then((res) => {
-      if (res?.data === 'success') {
-        // making force login with new password underhood
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(userEmail, password)
-          .catch((error) => {
-            notification.error({
-              message: 'Error',
-              description: error.message,
-              placement: 'topRight'
-            })
-          })
-        updateDocument('users', userId, { isTemporaryPasswordResolved: true })
-      } else {
-        console.log(res)
-      }
-      return res
+  } else {
+    notification.error({
+      message: 'Error',
+      description: errorDescription,
+      placement: 'topRight'
     })
-    .catch((error) => {
-      console.error(error)
-    })
+  }
+  return updateClientPasswordResponse
 }
 
 export default completeNewPassword

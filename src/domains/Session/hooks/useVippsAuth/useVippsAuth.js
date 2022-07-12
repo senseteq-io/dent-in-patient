@@ -58,8 +58,8 @@ const useVippsAuth = () => {
       } catch (error) {
         notification.error({
           message: 'Error',
-          description: t('Can not login user!'),
-          data: error.message
+          description: t('Can not login user with vipps'),
+          placement: 'topRight'
         })
         console.error(error)
         history.push('/auth')

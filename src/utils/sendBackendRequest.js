@@ -12,7 +12,7 @@ const sendBackendRequest = async (
   isJsonResponse = true
 ) => {
   try {
-    if (!body || !endpoint) {
+    if (!endpoint || (!body && method !== 'DELETE')) {
       throw new Error('Missing required parameters as endpoint or body')
     }
 
@@ -38,9 +38,10 @@ const sendBackendRequest = async (
   } catch (error) {
     notification.error({
       message: 'Error',
-      description: `${errorDescription}. ${error.message}`,
+      description: errorDescription,
       placement: 'topRight'
     })
+    console.error(error)
   }
 }
 

@@ -2,13 +2,11 @@ import { Button, Form, Input, notification } from 'antd'
 
 import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
+import { sendBackendRequest } from 'utils'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
 import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUserFormValidators } from 'domains/User/hooks'
-
-const DENT_IN_FUNCTIONS_API_URL =
-  process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
 const UserSimpleForm = (props) => {
   const { initialValues } = props
@@ -30,17 +28,14 @@ const UserSimpleForm = (props) => {
 
     try {
       // update user using our backend API
-      await fetch(
-        DENT_IN_FUNCTIONS_API_URL + `/user/${initialValues?.userId}`,
-        {
-          method: 'PATCH',
-          cache: 'no-cache',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(userDataToUpdate)
-        }
-      )
+      await sendBackendRequest({
+        endpoint: `/users/${initialValues?.userId}`,
+        method: 'PATCH',
+        body: userDataToUpdate,
+        errorDescription: t('Failed to update user'),
+        isJsonResponse: false
+      })
+
       if (!initialValues?.isAuth && initialValues?.bookingId) {
         // update pending booking from widget
         await updateVippsBookingFromWidget({
