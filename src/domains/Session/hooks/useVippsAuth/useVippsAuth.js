@@ -62,7 +62,7 @@ const useVippsAuth = () => {
           placement: 'topRight'
         })
         console.error(error)
-        history.push('/auth')
+        history.push(PATHS.UNAUTHENTICATED.LOGIN)
       }
     },
     [history, t]

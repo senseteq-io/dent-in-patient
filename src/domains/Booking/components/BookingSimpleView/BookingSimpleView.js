@@ -107,8 +107,9 @@ const BookingSimpleView = (props) => {
     } else {
       notification.error({
         message: 'Error',
-        description:
+        description: t(
           'Booking can not be canceled less than 48 hours before the start time'
+        )
       })
     }
   }
