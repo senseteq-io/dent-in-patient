@@ -12,10 +12,10 @@ const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
 const useTransformRoutesRedirectProperties = () => {
   const location = useLocation()
   const [userAuth, authLoading, authError] = useAuthState(firebase.auth())
-  const { user, loading } = useUser()
+  const { user, loading, nextBookingLoading } = useUser()
 
   const combinedLoading = authLoading || loading
-  const usersNextBookingExist = !!user?.data?.nextBooking?.id
+  const usersNextBookingExist = !!user?.nextBooking?._id
 
   // when user login for the first time with password he should update his temporary password
   // this condition help to redirect him to the appropriate page
@@ -26,8 +26,14 @@ const useTransformRoutesRedirectProperties = () => {
     [user]
   )
 
-  const isLoggedIn = !!userAuth && !!user?._id
-  const isLoggedOut = !isLoggedIn && location.pathname !== VIPPS_LOGIN_CALLBACK
+  const isLoggedIn =
+    !!userAuth && !!user?._id && location.pathname !== VIPPS_LOGIN_CALLBACK
+
+  const isLoggedOut =
+    !userAuth &&
+    !user?._id &&
+    !nextBookingLoading &&
+    location.pathname !== VIPPS_LOGIN_CALLBACK
 
   const isSpinVisible =
     combinedLoading && location.pathname !== VIPPS_LOGIN_CALLBACK

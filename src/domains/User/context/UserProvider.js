@@ -57,8 +57,7 @@ const UserProvider = ({ children }) => {
         .firestore()
         .collection(BOOKINGS)
         .where('userId', '==', user?.uid)
-        //! 'PENDING' SHOULD BE REPLACED TO {BOOKED_STATUS} AFTER TESTING AND FIXING ALL BUGS
-        .where('status', '==', 'PENDING')
+        .where('status', '==', 'BOOKED')
         .where('start', '>=', currentDateFormatted)
         .orderBy('start')
         .limit(1)
@@ -176,7 +175,12 @@ const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        user: { ...value, nextBooking, bookingError },
+        user: {
+          ...value,
+          nextBooking,
+          nextBookingLoading: loading || bookingLoading || userPreloading,
+          bookingError
+        },
         loading: loading || bookingLoading
       }}
     >
