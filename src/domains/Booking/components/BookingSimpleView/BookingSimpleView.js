@@ -32,11 +32,10 @@ import { ClinicianAvatarIcon } from 'domains/Clinician/components'
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
 import moment from 'moment'
+import { sendBackendRequest } from 'utils'
 // import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
-
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
 const BookingSimpleView = (props) => {
   const { booking } = props
@@ -94,22 +93,23 @@ const BookingSimpleView = (props) => {
   )
 
   const handleBookingCancel = async () => {
-    const response = await fetch(PROD_API_URL + `/bookings/${booking?._id}`, {
+    const cancelResponse = await sendBackendRequest({
+      endpoint: `/bookings/${booking?._id}`,
       method: 'DELETE',
-      cache: 'no-cache',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      errorDescription: t('Failed to cancel booking')
     })
-    if (response.ok) {
+
+    if (cancelResponse.booking === 'CANCELED') {
       notification.success({
         message: 'Success',
-        description: 'Booking cancelled'
+        description: t('Booking cancelled')
       })
     } else {
       notification.error({
         message: 'Error',
-        description: 'Server responded with 404, cannot complete operation'
+        description: t(
+          'Booking can not be canceled less than 48 hours before the start time'
+        )
       })
     }
   }

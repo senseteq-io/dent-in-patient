@@ -41,7 +41,8 @@ const SetNewPasswordForm = (props) => {
       const { data } = await completeNewPassword({
         password,
         userEmail: user?.email,
-        userId: user?._id
+        userId: user?._id,
+        errorDescription: t('Failed to complete new password')
       })
       if (data === 'success') {
         const nextRoute = user?.nextBooking?._id

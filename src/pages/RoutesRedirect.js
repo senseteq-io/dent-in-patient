@@ -1,79 +1,66 @@
 import { Box, Text } from '@qonsoll/react-design'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHandleError, useTransformRoutesRedirectProperties } from 'hooks'
 
 import PATHS from './paths'
 import PropTypes from 'prop-types'
 import { Spinner } from 'components'
-import firebase from 'firebase/compat/app'
-import { getAuth } from 'firebase/auth'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { useEffect } from 'react'
-import { useHandleError } from 'hooks'
+import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
-import { useUser } from 'domains/User/context' // uncomment this part if you want to use this hook
-
-const PASSWORD_AUTH_PROVIDER = 'password'
-const unauthenticatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
-  (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
-)
 
 const RoutesRedirect = ({ children }) => {
   const { t } = useTranslations()
   const history = useHistory()
-  const location = useLocation()
   const handleError = useHandleError()
-  const [userAuth, authLoading, error] = useAuthState(firebase.auth())
-  const { user, loading, artificialLoading } = useUser() // uncomment this part if you need to add extra conditions based on data from the DB
+  const {
+    authError,
+    usersNextBookingExist,
+    isTemporaryPasswordNotResolved,
+    isLoggedIn,
+    isLoggedOut,
+    isSpinVisible
+  } = useTransformRoutesRedirectProperties()
 
   // Making decision how to redirect
   useEffect(() => {
-    /* This code is checking if the current path is in the unauthenticatedPaths array. */
-    const isUnauthenticatedPath = unauthenticatedPaths.includes(
-      location.pathname
-    )
-    /* If the user is logged in, and the user's email is verified, then the user is logged in. */
-    const usersNextBookingExist = !loading && user?.nextBooking?._id
-    const isLoadingCombined = authLoading || artificialLoading || loading
-    const isTemporaryPasswordNotResolved =
-      getAuth()?.currentUser?.providerData?.[0]?.providerId ===
-        PASSWORD_AUTH_PROVIDER && !user?.isTemporaryPasswordResolved
-    const isLoggedIn =
-      isUnauthenticatedPath && userAuth && !isLoadingCombined && user?._id
-    const isLoggedOut = !isUnauthenticatedPath && !userAuth && !authLoading
-
-    /* If the user is logged in, redirect to the config page. If the user is logged out, redirect to
-    the logout page. If the user's email is not verified, redirect to the email confirmation page.
-    */
+    // User logged in with password and don`t resolve temporary password
+    // go to temporary password resolve page
     isLoggedIn &&
       isTemporaryPasswordNotResolved &&
       history.push(PATHS.AUTHENTICATED.SET_NEW_PASSWORD)
+
+    // User logged in, already get all needed data to check if he has next booking
+    // has booking in the future, we redirect to future booking page
     isLoggedIn &&
       !isTemporaryPasswordNotResolved &&
       usersNextBookingExist &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITH_BOOKING)
+
+    // User logged in, already get all needed data to check if he has next booking
+    // and user don`t have booking in the future, we redirect to all bookings page
     isLoggedIn &&
       !usersNextBookingExist &&
       !isTemporaryPasswordNotResolved &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
+
+    // User logged out, we redirect to login page
     isLoggedOut && history.push(PATHS.CONFIG.AFTER_LOGOUT)
   }, [
     history,
-    userAuth,
-    authLoading,
-    location.pathname,
-    user,
-    loading,
-    artificialLoading
+    isLoggedIn,
+    isLoggedOut,
+    isTemporaryPasswordNotResolved,
+    usersNextBookingExist
   ])
 
   // Session fetching error handling
   useEffect(() => {
-    error && handleError(error)
-  }, [error, handleError])
+    authError && handleError(authError)
+  }, [authError, handleError])
 
   return (
     <>
-      {authLoading || loading ? (
+      {isSpinVisible ? (
         <Box
           height="100%"
           display="flex"

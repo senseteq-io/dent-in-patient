@@ -2,12 +2,11 @@ import { Button, Form, Input, notification } from 'antd'
 
 import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
+import { sendBackendRequest } from 'utils'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
 import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUserFormValidators } from 'domains/User/hooks'
-
-const PROD_API_URL = process.env.REACT_APP_PROD_API_URL
 
 const UserSimpleForm = (props) => {
   const { initialValues } = props
@@ -19,37 +18,34 @@ const UserSimpleForm = (props) => {
     useUserFormValidators()
 
   const onSubmitUser = async (userData) => {
-    const userPhoneFormatted = initialValues?.phoneNumber
-      ? `+${initialValues?.phoneNumber}`
-      : null
     const userDataToUpdate = {
       firstName: userData?.firstName,
       lastName: userData?.lastName,
       postalCode: userData?.postalCode,
-      phone: userPhoneFormatted,
+      phone: initialValues?.phoneNumber,
       nin: userData?.personalNumber
     }
 
     try {
       // update user using our backend API
-      await fetch(PROD_API_URL + `/users/${initialValues?.userId}`, {
+      await sendBackendRequest({
+        endpoint: `/users/${initialValues?.userId}`,
         method: 'PATCH',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userDataToUpdate)
+        body: userDataToUpdate,
+        errorDescription: t('Failed to update user'),
+        isJsonResponse: false
       })
+
       if (!initialValues?.isAuth && initialValues?.bookingId) {
         // update pending booking from widget
         await updateVippsBookingFromWidget({
           pendingBookingId: initialValues?.bookingId,
-          clientPhone: userPhoneFormatted,
+          clientPhone: initialValues?.phoneNumber,
           userId: initialValues?.userId
         })
       }
 
-      history.push(PATHS.CONFIG.AFTER_LOGIN)
+      history.push(PATHS.UNAUTHENTICATED.LOGIN)
     } catch (e) {
       console.error('Error occurred during saving profile data. ', e.message)
       notification.error({
