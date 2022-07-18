@@ -98,8 +98,7 @@ const BookingSimpleView = (props) => {
       method: 'DELETE',
       errorDescription: t('Failed to cancel booking')
     })
-
-    if (cancelResponse.booking === 'CANCELED') {
+    if (cancelResponse?.data?.booking === 'CANCELED') {
       notification.success({
         message: 'Success',
         description: t('Booking cancelled')
