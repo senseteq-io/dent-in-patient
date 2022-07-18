@@ -3,14 +3,14 @@ import { notification } from 'antd'
 const DENT_IN_FUNCTIONS_API_URL =
   process.env.REACT_APP_DENT_IN_FUNCTIONS_API_URL
 
-const sendBackendRequest = async (
+const sendBackendRequest = async ({
   endpoint,
   method = 'POST',
   body,
   headers,
   errorDescription,
   isJsonResponse = true
-) => {
+}) => {
   try {
     if (!endpoint || (!body && method !== 'DELETE')) {
       throw new Error('Missing required parameters as endpoint or body')
