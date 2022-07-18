@@ -21,7 +21,7 @@ const useGetBookings = () => {
           .where('userId', '==', user?._id)
           .where('status', 'in', ['PENDING', 'BOOKED'])
           .where('start', '>=', currentDateFormatted)
-          .orderBy('start', 'desc')
+          .orderBy('start', 'asc')
     )
   const [clientPassedBookings, passedBookingsLoading, passedBookingError] =
     useCollectionData(
@@ -32,7 +32,7 @@ const useGetBookings = () => {
           .where('userId', '==', user?._id)
           .where('status', 'in', ['PENDING', 'BOOKED'])
           .where('start', '<=', currentDateFormatted)
-          .orderBy('start', 'desc')
+          .orderBy('start', 'asc')
     )
   const [
     clientCanceledBookings,
@@ -45,7 +45,7 @@ const useGetBookings = () => {
         .collection(BOOKINGS)
         .where('userId', '==', user?._id)
         .where('status', '==', 'CANCELED')
-        .orderBy('start', 'desc')
+        .orderBy('start', 'asc')
   )
 
   return [
