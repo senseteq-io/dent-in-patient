@@ -19,7 +19,11 @@ const VippsCallback = () => {
   // [COMPUTED_PROPERTIES]
   // This parameters check if user should see form to update his personal data
   const isUserWithoutSSN = useMemo(
-    () => user?._id && !user?.data && !dataFromVipps?.personalNumber,
+    () =>
+      user?._id &&
+      dataFromVipps &&
+      !user?.data &&
+      !dataFromVipps?.personalNumber,
     [user, dataFromVipps]
   )
 

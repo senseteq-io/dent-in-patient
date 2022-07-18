@@ -31,11 +31,13 @@ const useVippsAuth = () => {
         redirectUri: APP_URL + VIPPS_LOGIN_CALLBACK
       }
       // Get access token and user data from vipps
-      const { data } = await sendBackendRequest({
+      const vippsAuthResponse = await sendBackendRequest({
         endpoint: VIPPS_AUTH_ENDPOINT,
+        method: 'POST',
         body: requestData,
         errorDescription: t('Failed to get access token and data from vipps')
       })
+      const data = vippsAuthResponse?.data
 
       // Try to login user with auth token
       try {
