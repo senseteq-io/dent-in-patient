@@ -20,6 +20,7 @@ const useVippsFlowBackgroundActions = () => {
 
   // [COMPONENT_STATE_HOOKS]
   const [isLoginCalled, setIsLoginCalled] = useState(false)
+  const [isBookingCalled, setIsBookingCalled] = useState(false)
   const [dataFromVipps, setDataFromVipps] = useState(null)
 
   // Get Vipps parameters from url
@@ -44,16 +45,22 @@ const useVippsFlowBackgroundActions = () => {
   }, [isLoginCalled, urlParamsObject, vippsLogin])
 
   useEffect(() => {
-    if (user?.data && dataFromVipps?.bookingId && !dataFromVipps?.isAuth) {
+    if (
+      user?.data &&
+      dataFromVipps?.bookingId &&
+      !isBookingCalled &&
+      !dataFromVipps?.isAuth
+    ) {
       const processVippsBooking = async () => {
         try {
+          setIsBookingCalled(true)
+
           // If user booked appointment from vipps in widget, update booking with user info
           await updateVippsBookingFromWidget({
             pendingBookingId: dataFromVipps.bookingId,
             clientPhone: dataFromVipps.phoneNumber,
             userId: user._id
           })
-          history.push(LOGIN)
         } catch (e) {
           notification.error({
             message: 'Error',
