@@ -1,6 +1,7 @@
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
 
 import { Account } from '@qonsoll/react-design'
+import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
 import { useHistory } from 'react-router-dom'
@@ -28,7 +29,10 @@ const AccountMenu = ({ id, avatar, displayName, email }) => {
         icon: <LogoutOutlined />,
         danger: true,
         disabled: false,
-        onClick: () => firebase.auth().signOut()
+        onClick: async () => {
+          await firebase.auth().signOut()
+          history.push(PATHS.CONFIG.AFTER_LOGOUT)
+        }
       }
     ],
     [history, id, t]

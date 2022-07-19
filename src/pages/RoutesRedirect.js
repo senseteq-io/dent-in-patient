@@ -42,9 +42,6 @@ const RoutesRedirect = ({ children }) => {
       !usersNextBookingExist &&
       !isTemporaryPasswordNotResolved &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
-
-    // User logged out, we redirect to login page
-    isLoggedOut && history.push(PATHS.CONFIG.AFTER_LOGOUT)
   }, [
     history,
     isLoggedIn,

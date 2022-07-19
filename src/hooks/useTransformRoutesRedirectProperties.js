@@ -12,7 +12,7 @@ const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
 const useTransformRoutesRedirectProperties = () => {
   const location = useLocation()
   const [userAuth, authLoading, authError] = useAuthState(firebase.auth())
-  const { user, loading, nextBookingLoading } = useUser()
+  const { user, loading } = useUser()
 
   const combinedLoading = authLoading || loading
   const usersNextBookingExist = !!user?.nextBooking?._id
@@ -26,14 +26,15 @@ const useTransformRoutesRedirectProperties = () => {
     [user]
   )
 
-  const isLoggedIn =
-    !!userAuth && !!user?._id && location.pathname !== VIPPS_LOGIN_CALLBACK
+  const isUnauthenticatedPath = Object.values(PATHS.UNAUTHENTICATED).includes(
+    location.pathname
+  )
 
-  const isLoggedOut =
-    !userAuth &&
-    !user?._id &&
-    !nextBookingLoading &&
-    location.pathname !== VIPPS_LOGIN_CALLBACK
+  const isLoggedIn =
+    !!userAuth &&
+    !!user?._id &&
+    location.pathname !== VIPPS_LOGIN_CALLBACK &&
+    isUnauthenticatedPath
 
   const isSpinVisible =
     combinedLoading && location.pathname !== VIPPS_LOGIN_CALLBACK
@@ -43,7 +44,6 @@ const useTransformRoutesRedirectProperties = () => {
     usersNextBookingExist,
     isTemporaryPasswordNotResolved,
     isLoggedIn,
-    isLoggedOut,
     isSpinVisible
   }
 }
