@@ -1,8 +1,8 @@
 import { Col, PageWrapper, Row } from '@qonsoll/react-design'
+import { useEffect, useState } from 'react'
 
 import { Spin } from 'antd'
 import { UserSimpleForm } from 'domains/User/components'
-import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 import { useVippsFlowBackgroundActions } from 'domains/Session/hooks'
@@ -15,23 +15,25 @@ const VippsCallback = () => {
   // if user came from widget and have personal number
   // update pending booking with user info
   const dataFromVipps = useVippsFlowBackgroundActions()
-
+  const [isUserFormVisible, setIsUserFormVisible] = useState(false)
   // [COMPUTED_PROPERTIES]
   // This parameters check if user should see form to update his personal data
-  const isUserWithoutSSN = useMemo(
-    () =>
+
+  useEffect(() => {
+    if (
       user?._id &&
       dataFromVipps &&
-      !user?.data &&
-      !dataFromVipps?.personalNumber,
-    [user, dataFromVipps]
-  )
+      (!user?.data || !dataFromVipps?.personalNumber)
+    ) {
+      setIsUserFormVisible(true)
+    }
+  }, [user, dataFromVipps])
 
-  const pageTitle = isUserWithoutSSN
+  const pageTitle = isUserFormVisible
     ? t('Profile data')
     : `${t('Processing Vipps authorization')}...`
 
-  const pageSubtitle = isUserWithoutSSN
+  const pageSubtitle = isUserFormVisible
     ? t('Please, enter your profile data to complete your booking')
     : t(
         'Your account is being verified, please wait, the process will not take more than 10 seconds'
@@ -48,7 +50,7 @@ const VippsCallback = () => {
       }}
       contentWidth={['100%', '100%', 400]}
     >
-      {isUserWithoutSSN ? (
+      {isUserFormVisible ? (
         <UserSimpleForm initialValues={dataFromVipps} />
       ) : (
         <Row h="center">
