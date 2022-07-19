@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { sendBackendRequest } from 'utils'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
 import { useHistory } from 'react-router-dom'
+import { useState } from 'react'
 import { useTranslations } from 'contexts/Translation'
 import { useUserFormValidators } from 'domains/User/hooks'
 
@@ -17,7 +18,10 @@ const UserSimpleForm = (props) => {
   const { postalCodeValidator, personalNumberValidator } =
     useUserFormValidators()
 
+  const [isFormProcessing, setIsFormProcessing] = useState(false)
+
   const onSubmitUser = async (userData) => {
+    setIsFormProcessing(true)
     const userDataToUpdate = {
       firstName: userData?.firstName,
       lastName: userData?.lastName,
@@ -47,6 +51,7 @@ const UserSimpleForm = (props) => {
 
       history.push(PATHS.UNAUTHENTICATED.LOGIN)
     } catch (e) {
+      setIsFormProcessing(false)
       console.error('Error occurred during saving profile data. ', e.message)
       notification.error({
         message: t('Failed to save profile data'),
@@ -105,7 +110,7 @@ const UserSimpleForm = (props) => {
         />
       </Form.Item>
 
-      <Button type="primary" htmlType="submit" block>
+      <Button type="primary" htmlType="submit" block loading={isFormProcessing}>
         {t('Submit')}
       </Button>
     </Form>
