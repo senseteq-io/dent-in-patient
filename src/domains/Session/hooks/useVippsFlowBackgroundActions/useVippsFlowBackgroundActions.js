@@ -1,10 +1,17 @@
+import {
+  BOOKED_STATUS,
+  FAILED_STATUS
+} from 'domains/Booking/__constants__/bookingStatuses'
 import { useEffect, useMemo, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
+import { COLLECTIONS } from '__constants__'
 import PATHS from 'pages/paths'
+import firebase from 'firebase/compat/app'
 import { notification } from 'antd'
 import { updateVippsBookingFromWidget } from 'domains/Booking/helpers'
 import { urlParamsToObject } from 'utils'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 import { useVippsAuth } from 'domains/Session/hooks'
@@ -28,6 +35,43 @@ const useVippsFlowBackgroundActions = () => {
     () => urlParamsToObject(location.search),
     [location.search]
   )
+
+  const [clientLastProcessedBooking] = useDocumentData(
+    dataFromVipps?.bookingId &&
+      firebase
+        .firestore()
+        .collection(COLLECTIONS.BOOKINGS)
+        .doc(dataFromVipps?.bookingId)
+  )
+
+  useEffect(() => {
+    if (
+      user?.data &&
+      dataFromVipps?.bookingId &&
+      !dataFromVipps?.isAuth &&
+      clientLastProcessedBooking?._id &&
+      [BOOKED_STATUS, FAILED_STATUS].includes(
+        clientLastProcessedBooking?.status
+      )
+    ) {
+      // This useEffect helps to await backend listener that update booking status
+      // and then we display is booking was successful or something went wrong
+      clientLastProcessedBooking.status === BOOKED_STATUS &&
+        notification.success({
+          message: t('Success'),
+          description: t('Booking was successful')
+        })
+
+      clientLastProcessedBooking.status === FAILED_STATUS &&
+        notification.error({
+          message: t('Booking error'),
+          description: t(clientLastProcessedBooking?.errorMessage)
+        })
+
+      // Redirect user to login page to use redirects conditions from Redirects context
+      history.push(LOGIN)
+    }
+  }, [user, dataFromVipps, clientLastProcessedBooking, history, t])
 
   // Vipps login
   useEffect(() => {
@@ -72,7 +116,7 @@ const useVippsFlowBackgroundActions = () => {
 
       processVippsBooking()
     }
-  }, [dataFromVipps, history, t, user])
+  }, [dataFromVipps, history, isBookingCalled, t, user])
 
   return dataFromVipps
 }

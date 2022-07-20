@@ -1,3 +1,6 @@
 export const BOOKED_STATUS = 'BOOKED'
 export const PENDING_STATUS = 'PENDING'
+export const AUTHORIZED_STATUS = 'AUTHORIZED'
 export const CANCELED_STATUS = 'CANCELED'
+export const FAILED_STATUS = 'FAILED'
+export const FAILED_CANCEL_STATUS = 'FAILED_CANCEL'
