@@ -20,7 +20,6 @@ import { ThemeProvider } from 'styled-components'
 import breakpoints from '../../styles/breakpoints'
 import firebase from 'firebase/compat/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 
@@ -28,6 +27,9 @@ const languages = [
   { title: 'English', shortCode: 'en' },
   { title: 'Norsk', shortCode: 'no' }
 ]
+
+const { VIPPS_LOGIN_CALLBACK } = PATHS.UNAUTHENTICATED
+const { SET_NEW_PASSWORD } = PATHS.AUTHENTICATED
 
 const BoilerplateLayout = ({ children }) => {
   const history = useHistory()
@@ -37,17 +39,18 @@ const BoilerplateLayout = ({ children }) => {
   const { user } = useUser()
   /* If the user is authenticated, the component will render the children. Otherwise, it will render
   the fallback component. */
-  const isAuthenticated = useMemo(
-    () =>
-      userAuth?.uid &&
-      user?._id &&
-      location.pathname !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK,
-    [userAuth, user, location.pathname]
-  )
+  const isVippsCallbackPage = location.pathname === VIPPS_LOGIN_CALLBACK
+
+  const isAuthenticated = userAuth?.uid && user?._id && !isVippsCallbackPage
 
   const changeLanguage = (shortCodeLanguage) => {
     setCurrentLanguage(shortCodeLanguage)
     // moment.locale(shortCodeLanguage === 'no' ? 'nb' : shortCodeLanguage)
+  }
+
+  const redirectToMainPage = () => {
+    location.pathname !== SET_NEW_PASSWORD &&
+      history.push(PATHS.AUTHENTICATED.BOOKINGS)
   }
 
   /* The layoutConfig is memoized to only re-render when isAuthenticated changes. */
@@ -96,7 +99,7 @@ const BoilerplateLayout = ({ children }) => {
                 color="white"
                 shadow="0 2px 20px 0px rgb(0 0 0 / 10%)"
               >
-                <Box onClick={() => history.push('/bookings')} cursor="pointer">
+                <Box onClick={redirectToMainPage} cursor="pointer">
                   <Logo />
                 </Box>
                 <Box>
@@ -147,7 +150,10 @@ const BoilerplateLayout = ({ children }) => {
         <LayoutSystemProvider {...layoutConfig}>
           <Layout
             header={
-              <LayoutHeader left={<Back />} center={<Logo height="40" />} />
+              <LayoutHeader
+                left={isVippsCallbackPage ? null : <Back />}
+                center={<Logo height="40" />}
+              />
             }
           >
             {children}
