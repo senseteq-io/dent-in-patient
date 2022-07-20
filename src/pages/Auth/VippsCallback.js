@@ -23,7 +23,8 @@ const VippsCallback = () => {
     if (
       user?._id &&
       dataFromVipps &&
-      (!user?.data || !dataFromVipps?.personalNumber)
+      !user?.data &&
+      !dataFromVipps?.personalNumber
     ) {
       setIsUserFormVisible(true)
     }
