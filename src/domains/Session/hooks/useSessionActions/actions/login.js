@@ -13,11 +13,13 @@ const login = ({ credentials, onError }) => {
   return firebase
     .auth()
     .signInWithEmailAndPassword(credentials.email, credentials.password)
-    .then(() => {
+    .then((userAuthData) => {
       localStorage.setItem(
         LS.LAST_SESSION_PROVIDER,
         LAST_SESSION_PROVIDERS.EMAIL
       )
+
+      return userAuthData
     })
     .catch((err) => {
       onError && onError(err)

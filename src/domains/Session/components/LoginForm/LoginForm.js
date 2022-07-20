@@ -2,15 +2,17 @@ import { Box, Button, Col, Input, Link, Row } from '@qonsoll/react-design'
 import { useEffect, useMemo, useState } from 'react'
 import { useLastSession, useSessionActions } from 'domains/Session/hooks'
 
-// import { COLLECTIONS } from '__constants__'
+import { COLLECTIONS } from '__constants__'
 import { Form } from 'antd'
 import { LastSessionUser } from 'domains/Session/components'
+import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
-// import { getDocument } from 'services/firestore'
+import { getDocument } from 'services/firestore'
 import { getURLParameterValue } from 'utils'
+import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 
-// const { USERS } = COLLECTIONS
+const { USERS } = COLLECTIONS
 
 const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
   const { t } = useTranslations()
@@ -22,6 +24,7 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
   /* Using the useSessionActions hook to get the last session provider. */
   const { getLastSessionProvider } = useSessionActions()
   const [form] = Form.useForm()
+  const history = useHistory()
 
   //[COMPUTED PROPERTIES]
   const clientEmail = useMemo(() => getURLParameterValue('email'), [])
@@ -47,8 +50,17 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
   // [CLEAN_FUNCTIONS]
   const onFinish = async (credentials) => {
     setLoading(true)
-    await login({ credentials, onError })
-    // const userData = await getDocument(USERS, clientId)
+    const result = await login({ credentials, onError })
+    // Get user data from firestore to check if user already resolved temporary password
+    const userId = result?.user?.uid
+    const userData = await getDocument(USERS, userId)
+    // If user already resolved temporary password, redirect to login to make correct redirect
+    // in other case redirect to resolving temporary password page
+    if (userData?.isTemporaryPasswordResolved) {
+      history.push(PATHS.UNAUTHENTICATED.LOGIN)
+    } else {
+      history.push(PATHS.AUTHENTICATED.SET_NEW_PASSWORD)
+    }
 
     setLoading(false)
   }
