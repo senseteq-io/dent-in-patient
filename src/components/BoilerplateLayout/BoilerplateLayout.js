@@ -58,6 +58,7 @@ const BoilerplateLayout = ({ children }) => {
     isAsideLeft: false,
     asideLeftOuter: true
   }
+  const headerLeftComponent = isVippsCallbackPage ? null : <Back />
 
   const languageMenu = (
     <Menu
@@ -151,7 +152,7 @@ const BoilerplateLayout = ({ children }) => {
           <Layout
             header={
               <LayoutHeader
-                left={isVippsCallbackPage ? null : <Back />}
+                left={headerLeftComponent}
                 center={<Logo height="40" />}
               />
             }
