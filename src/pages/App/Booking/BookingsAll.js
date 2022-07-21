@@ -29,7 +29,7 @@ const BookingsAll = () => {
     futureBookingError || canceledBookingError || passedBookingError
   return (
     <PageWrapper
-      headingProps={{ title: 'Bookings', titleSize: 2 }}
+      headingProps={{ title: t('Bookings'), titleSize: 2 }}
       contentWidth={['100%', '80%', '70%', '50%', '40%']}
       action={
         <Button onClick={goToNextBookingPage}>{t('Show next booking')}</Button>

@@ -139,7 +139,7 @@ const BookingSimpleView = (props) => {
     )
   return (
     <CardDropdown>
-      <StyledRibbon text={checkBookingStatus} color={changeBadgeColor}>
+      <StyledRibbon text={t(checkBookingStatus)} color={changeBadgeColor}>
         <Container py="12px" height="100%">
           <Row height="100%">
             <Col justifyContent="space-between" height="100%" cw={12}>
@@ -280,7 +280,7 @@ const BookingSimpleView = (props) => {
                       color="var(--ql-color-black-t-lighten2)"
                       style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                     >
-                      Time
+                      {t('Time')}
                     </Text>
                   </Box>
 
@@ -313,7 +313,7 @@ const BookingSimpleView = (props) => {
                       style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                       ml={2}
                     >
-                      Date
+                      {t('Date')}
                     </Text>
                   </Box>
                   <Title
@@ -344,7 +344,7 @@ const BookingSimpleView = (props) => {
                       style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                       ml={2}
                     >
-                      Clinic
+                      {t('Clinic')}
                     </Text>
                   </Box>
                   <Title
@@ -374,7 +374,7 @@ const BookingSimpleView = (props) => {
                       style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                       ml={2}
                     >
-                      Clinic address
+                      {t('Clinic address')}
                     </Text>
                   </Box>
                   <Title
@@ -410,12 +410,12 @@ const BookingSimpleView = (props) => {
                           variant="body1"
                           style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                         >
-                          Cancel yours booking?
+                          {t('Cancel yours booking?')}
                         </Text>
                       }
                     >
                       <Button block size="medium" danger type="text">
-                        Cancel
+                        {t('Cancel')}
                       </Button>
                     </Popconfirm>
                   </Col>
