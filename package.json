@@ -15,7 +15,7 @@
   "dependencies": {
     "@ant-design/icons": "4.6.4",
     "@qonsoll/react-design": "^2.0.4",
-    "@qonsoll/translation": "^0.4.3",
+    "@qonsoll/translation": "^0.4.6",
     "@react-firebase/auth": "^0.2.10",
     "@react-firebase/firestore": "^0.5.5",
     "@testing-library/jest-dom": "^5.16.1",
