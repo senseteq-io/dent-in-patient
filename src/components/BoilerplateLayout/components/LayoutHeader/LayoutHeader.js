@@ -9,7 +9,9 @@ const LayoutHeader = ({ left, center, right }) => {
         <Row>
           <Col cw={2}>{left}</Col>
           <Col justifyContent="center">{center}</Col>
-          <Col cw={2}>{right}</Col>
+          <Col cw={2} alignItems="flex-end">
+            {right}
+          </Col>
         </Row>
       </Container>
     </Header>

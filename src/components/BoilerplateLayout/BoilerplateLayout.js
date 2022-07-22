@@ -82,6 +82,25 @@ const BoilerplateLayout = ({ children }) => {
         ))}
     </Menu>
   )
+  const languageSwitcherBtnDropdown = (
+    <Dropdown
+      overlay={languageMenu}
+      placement="bottomRight"
+      trigger="click"
+      arrow
+    >
+      <Button
+        ml={2}
+        type="text"
+        style={{ textTransform: 'uppercase' }}
+        icon={
+          <Text strong fontSize="var(--ql-font-size-body1)" type="secondary">
+            {language}
+          </Text>
+        }
+      />
+    </Dropdown>
+  )
 
   return (
     <ThemeProvider theme={breakpoints}>
@@ -109,32 +128,7 @@ const BoilerplateLayout = ({ children }) => {
                         email={userAuth?.email}
                       />
                     </Col>
-                    <Col cw="auto">
-                      <Dropdown
-                        overlay={languageMenu}
-                        placement="bottomRight"
-                        trigger="click"
-                        arrow
-                      >
-                        <Button
-                          ml={2}
-                          type="text"
-                          style={{ textTransform: 'uppercase' }}
-                          icon={
-                            <Text
-                              strong
-                              // style={{
-                              //   fontSize: 16
-                              // }}
-                              fontSize="var(--ql-font-size-body1)"
-                              type="secondary"
-                            >
-                              {language}
-                            </Text>
-                          }
-                        />
-                      </Dropdown>
-                    </Col>
+                    <Col cw="auto">{languageSwitcherBtnDropdown}</Col>
                   </Row>
                 </Box>
               </Header>
@@ -147,7 +141,11 @@ const BoilerplateLayout = ({ children }) => {
         <LayoutSystemProvider {...layoutConfig}>
           <Layout
             header={
-              <LayoutHeader left={<Back />} center={<Logo height="40" />} />
+              <LayoutHeader
+                left={<Back />}
+                center={<Logo height="40" />}
+                right={languageSwitcherBtnDropdown}
+              />
             }
           >
             {children}
