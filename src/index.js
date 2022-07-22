@@ -1,5 +1,5 @@
 import 'firebase/auth'
-import 'firebase/database'
+import 'firebase/compat/database'
 import '@qonsoll/react-design/dist/styles/antd/index.css'
 import '@qonsoll/react-design/dist/styles/vars/index.css'
 import './styles/styles.css'
@@ -10,6 +10,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { UserProvider } from 'domains/User/context'
 import firebase from 'firebase/compat/app'
 import firebaseConfigs from 'configs/firebase'
+
 // import reportWebVitals from './reportWebVitals'
 
 /* This is the code that initializes the firebase app. */

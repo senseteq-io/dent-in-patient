@@ -1,5 +1,3 @@
-import { createContext } from 'react'
+import { TranslationContext } from '@qonsoll/translation'
 
-const TranslationsContext = createContext()
-
-export default TranslationsContext
+export default TranslationContext
