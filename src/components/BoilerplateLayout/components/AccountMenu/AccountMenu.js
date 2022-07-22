@@ -1,16 +1,17 @@
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { Account } from '@qonsoll/react-design'
 import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
-import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const AccountMenu = ({ id, avatar, displayName, email }) => {
   const { t } = useTranslations()
   const history = useHistory()
+  const location = useLocation()
   const menu = useMemo(
     () => [
       {
@@ -18,7 +19,7 @@ const AccountMenu = ({ id, avatar, displayName, email }) => {
         text: t('Profile'),
         icon: <UserOutlined />,
         danger: false,
-        disabled: false,
+        disabled: location.pathname === PATHS.AUTHENTICATED.SET_NEW_PASSWORD,
         onClick: () => {
           history.push(`/users/${id}`)
         }
@@ -35,7 +36,7 @@ const AccountMenu = ({ id, avatar, displayName, email }) => {
         }
       }
     ],
-    [history, id, t]
+    [history, id, location.pathname, t]
   )
   return (
     <Account

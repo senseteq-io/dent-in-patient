@@ -15,7 +15,6 @@ const RoutesRedirect = ({ children }) => {
   const {
     authError,
     usersNextBookingExist,
-    isTemporaryPasswordNotResolved,
     isLoggedIn,
     isLoggedOut,
     isSpinVisible
@@ -23,16 +22,9 @@ const RoutesRedirect = ({ children }) => {
 
   // Making decision how to redirect
   useEffect(() => {
-    // User logged in with password and don`t resolve temporary password
-    // go to temporary password resolve page
-    isLoggedIn &&
-      isTemporaryPasswordNotResolved &&
-      history.push(PATHS.AUTHENTICATED.SET_NEW_PASSWORD)
-
     // User logged in, already get all needed data to check if he has next booking
     // has booking in the future, we redirect to future booking page
     isLoggedIn &&
-      !isTemporaryPasswordNotResolved &&
       usersNextBookingExist &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITH_BOOKING)
 
@@ -40,15 +32,8 @@ const RoutesRedirect = ({ children }) => {
     // and user don`t have booking in the future, we redirect to all bookings page
     isLoggedIn &&
       !usersNextBookingExist &&
-      !isTemporaryPasswordNotResolved &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
-  }, [
-    history,
-    isLoggedIn,
-    isLoggedOut,
-    isTemporaryPasswordNotResolved,
-    usersNextBookingExist
-  ])
+  }, [history, isLoggedIn, isLoggedOut, usersNextBookingExist])
 
   // Session fetching error handling
   useEffect(() => {
