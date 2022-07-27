@@ -37,7 +37,7 @@ const saveUserToDB = ({
       firstName,
       lastName,
       isPhoneValid: null,
-      phoneNumber,
+      phone: phoneNumber || null,
       data: null
       // role
     })
