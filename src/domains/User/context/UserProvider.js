@@ -96,7 +96,7 @@ const UserProvider = ({ children }) => {
     // and condition without user preloading pass to setting user data received from auth provider that overwrite user data
     // after adding user preloading there is all ok
     const isNoUserDataInDB =
-      !userPreloading && user && !value?.email && !loading
+      !userPreloading && user && !value?.email && !bookingLoading
     /* If there is no user data in the database, save the user data to the database. */
     if (isNoUserDataInDB) {
       const [firstName, lastName] = user?.displayName?.split(' ') || [
@@ -115,7 +115,15 @@ const UserProvider = ({ children }) => {
         onError: handleError
       })
     }
-  }, [saveUserToDB, handleError, user, value, loading, gdpr, userPreloading])
+  }, [
+    bookingLoading,
+    gdpr,
+    handleError,
+    user,
+    userPreloading,
+    value,
+    saveUserToDB
+  ])
 
   // Updating user's email verification status
   useEffect(() => {
