@@ -82,11 +82,14 @@ const useVippsFlowBackgroundActions = () => {
         // and save info to state for next steps
         const userAuthInfo = await vippsLogin(urlParamsObject)
         setDataFromVipps(userAuthInfo)
+        if (userAuthInfo?.isAuth) {
+          history.push(PATHS.UNAUTHENTICATED.LOGIN)
+        }
       }
 
       processVippsLogin()
     }
-  }, [isLoginCalled, urlParamsObject, vippsLogin])
+  }, [history, isLoginCalled, urlParamsObject, vippsLogin])
 
   useEffect(() => {
     if (
