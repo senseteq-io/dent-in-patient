@@ -22,7 +22,8 @@ const useTransformRoutesRedirectProperties = () => {
     otherUnauthenticatedRoutes
   ).includes(location.pathname)
 
-  const isLoggedIn = !!userAuth && !!user?._id && isUnauthenticatedPath
+  const isLoggedIn =
+    !!userAuth && !!user?._id && isUnauthenticatedPath && !combinedLoading
 
   const isSpinVisible =
     combinedLoading && location.pathname !== VIPPS_LOGIN_CALLBACK

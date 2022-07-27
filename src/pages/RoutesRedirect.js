@@ -12,13 +12,8 @@ const RoutesRedirect = ({ children }) => {
   const { t } = useTranslations()
   const history = useHistory()
   const handleError = useHandleError()
-  const {
-    authError,
-    usersNextBookingExist,
-    isLoggedIn,
-    isLoggedOut,
-    isSpinVisible
-  } = useTransformRoutesRedirectProperties()
+  const { authError, usersNextBookingExist, isLoggedIn, isSpinVisible } =
+    useTransformRoutesRedirectProperties()
 
   // Making decision how to redirect
   useEffect(() => {
@@ -33,7 +28,7 @@ const RoutesRedirect = ({ children }) => {
     isLoggedIn &&
       !usersNextBookingExist &&
       history.push(PATHS.CONFIG.AFTER_LOGIN_WITHOUT_BOOKING)
-  }, [history, isLoggedIn, isLoggedOut, usersNextBookingExist])
+  }, [history, isLoggedIn, usersNextBookingExist])
 
   // Session fetching error handling
   useEffect(() => {
