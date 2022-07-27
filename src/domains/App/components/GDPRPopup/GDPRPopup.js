@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { useState } from 'react'
 import { useTranslations } from 'contexts/Translation'
+import { useUser } from 'domains/User/context'
 
 const CloseWrapper = styled('div')`
   position: absolute;
@@ -44,7 +45,9 @@ const GDPR_FLAG = 'gdpr'
 const GDPRPopup = () => {
   const { t } = useTranslations()
   const history = useHistory()
-  const isAcceptedGDPR = JSON.parse(window?.localStorage.getItem(GDPR_FLAG))
+  const { user } = useUser()
+  const isAcceptedGDPR =
+    JSON.parse(window?.localStorage.getItem(GDPR_FLAG)) || user?.gdpr
   const [show, setShow] = useState(!isAcceptedGDPR)
   const redirectToTheCookiesPolicies = () => {
     history.push(PATHS.SERVICE.GDPR)
