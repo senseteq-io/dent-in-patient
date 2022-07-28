@@ -1,32 +1,62 @@
-import { Button, Container, PageWrapper, Text } from '@qonsoll/react-design'
+import { Button, Container, PageWrapper } from '@qonsoll/react-design'
+import { STATUSES, TIME } from '__constants__'
 
-import { BookingList } from 'domains/Booking/components'
-import { useGetBookings } from '../../../domains/Booking/hooks/get'
+import { BookingsByType } from '../../../domains/Booking/components'
+import moment from 'moment'
+// import { BookingList } from 'domains/Booking/components'
+// import { useGetBookings } from '../../../domains/Booking/hooks/get'
 import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 
+const { BOOKED, FUTURE, CANCELED, PASSED } = STATUSES
+const { CURRENT_DATE_FORMAT } = TIME
+// import { useUser } from 'domains/User/context'
+
 const BookingsAll = () => {
   const history = useHistory()
-  const { loading } = useUser()
+  // const { loading } = useUser()
   const { t } = useTranslations()
-
-  const [
-    clientFutureBookings,
-    futureBookingsLoading,
-    futureBookingError,
-    clientPassedBookings,
-    passedBookingsLoading,
-    passedBookingError,
-    clientCanceledBookings,
-    canceledBookingsLoading,
-    canceledBookingError
-  ] = useGetBookings()
+  const { user } = useUser()
+  const currentDateFormatted = moment().format(CURRENT_DATE_FORMAT)
+  // const [
+  //   clientFutureBookings,
+  //   futureBookingsLoading,
+  //   futureBookingError,
+  //   clientPassedBookings,
+  //   passedBookingsLoading,
+  //   passedBookingError,
+  //   clientCanceledBookings,
+  //   canceledBookingsLoading,
+  //   canceledBookingError
+  // ] = useGetBookings()
   const goToNextBookingPage = () => {
     history.push('/next-booking')
   }
-  const computedError =
-    futureBookingError || canceledBookingError || passedBookingError
+
+  const futureBookingsRef = [
+    ['userId', '==', user?._id],
+    ['status', 'in', [BOOKED]],
+    ['start', '>=', currentDateFormatted]
+  ]
+  const passedBookingsRef = [
+    ['userId', '==', user?._id],
+    ['status', 'in', [BOOKED]],
+    ['start', '<=', currentDateFormatted]
+  ]
+  const canceledBookingsRef = [
+    ['userId', '==', user?._id],
+    ['status', '==', CANCELED]
+  ]
+
+  const futureTitle = t(FUTURE)
+  const passedTitle = t(PASSED)
+  const canceledTitle = t(CANCELED)
+  // console.log(client)
+  // const computedError =
+  //   futureBookingError || canceledBookingError || passedBookingError
+  const additionalQuery = ['userId', '==', user?._id]
+
   return (
     <PageWrapper
       headingProps={{ title: t('Bookings'), titleSize: 2 }}
@@ -37,7 +67,28 @@ const BookingsAll = () => {
       height="100%"
     >
       <Container height="100%" style={{ gap: '16px' }}>
-        {loading ? <Text>Loading bookings...</Text> : null}
+        <BookingsByType
+          bookingsBelongTo={user}
+          additionalQuery={additionalQuery}
+          bookingsRef={futureBookingsRef}
+          bookingTitle={futureTitle}
+          bookingsCounterName="futureBookingsCounter"
+        />
+        <BookingsByType
+          bookingsBelongTo={user}
+          additionalQuery={additionalQuery}
+          bookingsRef={passedBookingsRef}
+          bookingTitle={passedTitle}
+          bookingsCounterName="passedBookingsCounter"
+        />
+        <BookingsByType
+          bookingsBelongTo={user}
+          additionalQuery={additionalQuery}
+          bookingsRef={canceledBookingsRef}
+          bookingTitle={canceledTitle}
+          bookingsCounterName="canceledBookingsCounter"
+        />
+        {/* {loading ? <Text>Loading bookings...</Text> : null}
         {!futureBookingsLoading ? (
           <BookingList
             hideAddCard
@@ -59,7 +110,7 @@ const BookingsAll = () => {
             bookings={clientCanceledBookings}
           />
         ) : null}
-        {computedError ? <Text>{JSON.stringify(computedError)}</Text> : null}
+        {computedError ? <Text>{JSON.stringify(computedError)}</Text> : null} */}
       </Container>
     </PageWrapper>
   )

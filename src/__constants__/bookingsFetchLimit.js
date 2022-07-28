@@ -1,0 +1,3 @@
+const BOOKINGS_FETCH_LIMIT = 6
+
+export default BOOKINGS_FETCH_LIMIT
