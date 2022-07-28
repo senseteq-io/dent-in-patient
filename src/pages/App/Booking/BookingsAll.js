@@ -3,33 +3,19 @@ import { STATUSES, TIME } from '__constants__'
 
 import { BookingsByType } from '../../../domains/Booking/components'
 import moment from 'moment'
-// import { BookingList } from 'domains/Booking/components'
-// import { useGetBookings } from '../../../domains/Booking/hooks/get'
 import { useHistory } from 'react-router-dom'
 import { useTranslations } from 'contexts/Translation'
 import { useUser } from 'domains/User/context'
 
 const { BOOKED, FUTURE, CANCELED, PASSED } = STATUSES
 const { CURRENT_DATE_FORMAT } = TIME
-// import { useUser } from 'domains/User/context'
 
 const BookingsAll = () => {
   const history = useHistory()
-  // const { loading } = useUser()
   const { t } = useTranslations()
   const { user } = useUser()
   const currentDateFormatted = moment().format(CURRENT_DATE_FORMAT)
-  // const [
-  //   clientFutureBookings,
-  //   futureBookingsLoading,
-  //   futureBookingError,
-  //   clientPassedBookings,
-  //   passedBookingsLoading,
-  //   passedBookingError,
-  //   clientCanceledBookings,
-  //   canceledBookingsLoading,
-  //   canceledBookingError
-  // ] = useGetBookings()
+
   const goToNextBookingPage = () => {
     history.push('/next-booking')
   }
@@ -52,9 +38,7 @@ const BookingsAll = () => {
   const futureTitle = t(FUTURE)
   const passedTitle = t(PASSED)
   const canceledTitle = t(CANCELED)
-  // console.log(client)
-  // const computedError =
-  //   futureBookingError || canceledBookingError || passedBookingError
+
   const additionalQuery = ['userId', '==', user?._id]
 
   return (
@@ -88,29 +72,6 @@ const BookingsAll = () => {
           bookingTitle={canceledTitle}
           bookingsCounterName="canceledBookingsCounter"
         />
-        {/* {loading ? <Text>Loading bookings...</Text> : null}
-        {!futureBookingsLoading ? (
-          <BookingList
-            hideAddCard
-            title={t('Future bookings')}
-            bookings={clientFutureBookings}
-          />
-        ) : null}
-        {!passedBookingsLoading ? (
-          <BookingList
-            hideAddCard
-            title={t('Passed bookings')}
-            bookings={clientPassedBookings}
-          />
-        ) : null}
-        {!canceledBookingsLoading ? (
-          <BookingList
-            hideAddCard
-            title={t('Canceled bookings')}
-            bookings={clientCanceledBookings}
-          />
-        ) : null}
-        {computedError ? <Text>{JSON.stringify(computedError)}</Text> : null} */}
       </Container>
     </PageWrapper>
   )
