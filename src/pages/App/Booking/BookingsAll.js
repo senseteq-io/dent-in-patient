@@ -19,7 +19,6 @@ const BookingsAll = () => {
   const goToNextBookingPage = () => {
     history.push('/next-booking')
   }
-
   const futureBookingsRef = [
     ['userId', '==', user?._id],
     ['status', 'in', [BOOKED]],

@@ -2,8 +2,8 @@ const STATUSES = {
   BOOKED: 'BOOKED',
   PENDING: 'PENDING',
   CANCELED: 'CANCELED',
-  FUTURE: 'Future',
-  PASSED: 'Passed'
+  FUTURE: 'FUTURE',
+  PASSED: 'PASSED'
 }
 
 export default STATUSES

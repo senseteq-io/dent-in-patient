@@ -1,40 +1,23 @@
-import { BOOKINGS_FETCH_LIMIT, COLLECTIONS } from '__constants__'
 import { Col, Container, Row, Text } from '@qonsoll/react-design'
-import { memo, useMemo } from 'react'
-import { useBookings, useGetBookingsCounter } from '../../../Booking/hooks/get'
 
 import BookingList from '../BookingList'
 import PropTypes from 'prop-types'
+import { memo } from 'react'
+import { useBookings } from '../../../Booking/hooks/get'
 import { useTranslations } from 'contexts/Translation'
 
-const { BOOKINGS } = COLLECTIONS
 function BookingsByType(props) {
-  const {
-    additionalQuery,
-    bookingsRef,
-    bookingTitle,
-    bookingsCounterName,
-    bookingsBelongTo
-  } = props
+  const { additionalQuery, bookingsRef, bookingTitle, bookingsCounterName } =
+    props
 
   const { t } = useTranslations()
-  const computetBookingsRef = useMemo(() => {
-    return bookingsBelongTo
-      ? {
-          ref: BOOKINGS,
-          limit: BOOKINGS_FETCH_LIMIT,
-          where: bookingsRef,
-          orderBy: ['start', 'desc']
-        }
-      : { ref: null }
-  }, [bookingsRef, bookingsBelongTo])
-  const [bookings, loading, error, next] = useBookings(computetBookingsRef)
-  const bookingCounter = useGetBookingsCounter({
-    additionalQuery,
-    bookingsCounterName
-  })
 
-  const loadMoreAvailable = bookings?.length < bookingCounter
+  const [bookings, loading, error, next, loadMoreAvailable, bookingCounter] =
+    useBookings({
+      bookingsRef,
+      additionalQuery,
+      bookingsCounterName
+    })
 
   return (
     <Container>

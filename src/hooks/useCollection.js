@@ -65,7 +65,7 @@ const useCollection = (props) => {
         })
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log(err)
+        console.error(err)
         setError(err)
       }
     }
