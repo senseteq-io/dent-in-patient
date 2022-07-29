@@ -1,11 +1,11 @@
 import { Badge, Button, Card, Col, Row, Title } from '@qonsoll/react-design'
 import { StyledCollapse, StyledPanel } from './BookingList.styled'
-import { useMemo, useState } from 'react'
 
 import { AddItemCard } from 'components'
 import BookingSimpleView from '../BookingSimpleView'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
+import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingList = (props) => {
@@ -13,14 +13,11 @@ const BookingList = (props) => {
   const history = useHistory()
   const { t } = useTranslations()
 
-  const [selectedItem, setSelectedItem] = useState(null)
   const isPanelOpen = useMemo(
     () => JSON.parse(localStorage.getItem(title)),
     [title]
   )
   const onCreateButtonClick = () => history.push('/booking/create')
-  const onEmptySpaceClick = () => setSelectedItem(null)
-
   // [COMPUTED PROPERTIES]
   const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   const isCollapsible = !bookings?.length && 'disabled'
@@ -34,7 +31,7 @@ const BookingList = (props) => {
     localStorage.setItem(title, JSON.stringify(!!key?.length))
   }
   return (
-    <Row onClick={onEmptySpaceClick} mb="16px">
+    <Row mb="16px">
       <>
         {!props?.hideAddCard && (
           <AddItemCard
@@ -77,11 +74,6 @@ const BookingList = (props) => {
                 <Col key={booking?._id || index} cw={checkRenderConditions}>
                   <Card
                     onContextMenu={(e) => e.preventDefault()}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setSelectedItem(booking?._id)
-                    }}
                     bodyStyle={{
                       padding: '8px 0px',
                       borderRadius: '12px',
@@ -89,15 +81,7 @@ const BookingList = (props) => {
                       height: '100%'
                     }}
                     style={{
-                      backgroundColor:
-                        booking?._id === selectedItem
-                          ? 'var(--ql-color-accent1-t-lighten6)'
-                          : '',
                       borderWidth: '1px',
-                      borderColor:
-                        booking?._id === selectedItem
-                          ? 'var(--ql-color-accent1-t-lighten4)'
-                          : 'transparent',
                       alignItems: 'center',
                       display: 'flex'
                     }}

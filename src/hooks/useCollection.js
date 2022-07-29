@@ -29,9 +29,6 @@ const useCollection = (props) => {
   const [loadMoreAvailable, setLoadMoreAvailable] = useState(true)
 
   // COMPUTED PROPERTIES
-  const orderByCheck = Array.isArray(propsOrderBy)
-    ? orderBy(...propsOrderBy)
-    : orderBy(...baseSortRule)
 
   useEffect(() => {
     if (propsWhere?.length) {
@@ -40,6 +37,9 @@ const useCollection = (props) => {
   }, [propsWhere])
 
   useEffect(() => {
+    const orderByCheck = Array.isArray(propsOrderBy)
+      ? orderBy(...propsOrderBy)
+      : orderBy(...baseSortRule)
     const fetchData = async () => {
       setLoading(true)
       try {
@@ -82,7 +82,9 @@ const useCollection = (props) => {
           query(
             collection(firestore, propsRef),
             ...propsWhere.map((rule) => where(...rule)),
-            orderByCheck,
+            Array.isArray(propsOrderBy)
+              ? orderBy(...propsOrderBy)
+              : orderBy(...baseSortRule),
             startAfter(lastVisible),
             limit(propsLimit)
           )
