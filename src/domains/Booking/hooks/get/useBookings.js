@@ -7,12 +7,11 @@ import { useUser } from 'domains/User/context'
 
 const { BOOKINGS } = COLLECTIONS
 
-// const ref = 'bookings'
 export default function useBookings(props) {
-  const { bookingsRef, additionalQuery, bookingsCounterName } = props
+  const { bookingsRef, bookingsCounterName } = props
   const { user } = useUser()
 
-  const computetBookingsRef = useMemo(() => {
+  const computedBookingsRef = useMemo(() => {
     return user?._id
       ? {
           ref: BOOKINGS,
@@ -24,20 +23,12 @@ export default function useBookings(props) {
   }, [bookingsRef, user])
 
   const bookingCounter = useGetBookingsCounter({
-    additionalQuery,
-    bookingsCounterName
+    bookingsCounterName,
+    bookingsRef
   })
 
-  const [value, loading, error, next] = useCollection(computetBookingsRef)
+  const [value, loading, error, next] = useCollection(computedBookingsRef)
   const loadMoreAvailable = value?.length < bookingCounter
 
-  return [
-    value,
-    loading,
-    error,
-    next,
-    // loadingMore,
-    loadMoreAvailable,
-    bookingCounter
-  ]
+  return [value, loading, error, next, loadMoreAvailable, bookingCounter]
 }

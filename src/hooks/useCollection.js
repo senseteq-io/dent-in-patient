@@ -28,6 +28,11 @@ const useCollection = (props) => {
   const [lastVisible, setLastVisible] = useState()
   const [loadMoreAvailable, setLoadMoreAvailable] = useState(true)
 
+  // COMPUTED PROPERTIES
+  const orderByCheck = Array.isArray(propsOrderBy)
+    ? orderBy(...propsOrderBy)
+    : orderBy(...baseSortRule)
+
   useEffect(() => {
     if (propsWhere?.length) {
       setLoadMoreAvailable(false)
@@ -42,16 +47,12 @@ const useCollection = (props) => {
           ? query(
               collection(firestore, propsRef),
               ...propsWhere.map((rule) => where(...rule)),
-              Array.isArray(propsOrderBy)
-                ? orderBy(...propsOrderBy)
-                : orderBy(...baseSortRule),
+              orderByCheck,
               limit(propsLimit)
             )
           : query(
               collection(firestore, propsRef),
-              Array.isArray(propsOrderBy)
-                ? orderBy(...propsOrderBy)
-                : orderBy(...baseSortRule),
+              orderByCheck,
               limit(propsLimit)
             )
         onSnapshot(querySnapshot, (data) => {
@@ -81,9 +82,7 @@ const useCollection = (props) => {
           query(
             collection(firestore, propsRef),
             ...propsWhere.map((rule) => where(...rule)),
-            Array.isArray(propsOrderBy)
-              ? orderBy(...propsOrderBy)
-              : orderBy(...baseSortRule),
+            orderByCheck,
             startAfter(lastVisible),
             limit(propsLimit)
           )

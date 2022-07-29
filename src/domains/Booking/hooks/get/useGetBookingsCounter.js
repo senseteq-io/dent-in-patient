@@ -8,7 +8,7 @@ const { CURRENT_DATE_FORMAT } = TIME
 const { BOOKED, CANCELED } = STATUSES
 const { BOOKINGS } = COLLECTIONS
 
-const useGetBookingsCounter = ({ additionalQuery, bookingsCounterName }) => {
+const useGetBookingsCounter = ({ bookingsCounterName, bookingsRef }) => {
   const [futureBookingsCounter, setFutureBookingsCounter] = useState()
   const [passedBookingsCounter, setPassedBookingsCounter] = useState()
   const [canceledBookingsCounter, setCanceledBookingsCounter] = useState()
@@ -25,11 +25,11 @@ const useGetBookingsCounter = ({ additionalQuery, bookingsCounterName }) => {
       try {
         // count future bookings in the collection
         const futureBookings =
-          additionalQuery[2] &&
+          bookingsRef[0][2] &&
           (await firebase
             .firestore()
             .collection(BOOKINGS)
-            .where(...additionalQuery)
+            .where(...bookingsRef[0])
             .where('status', 'in', [BOOKED])
             .where('start', '>=', currentDateFormatted)
             .orderBy('start', 'desc')
@@ -38,11 +38,11 @@ const useGetBookingsCounter = ({ additionalQuery, bookingsCounterName }) => {
 
         // count passed bookings in the collection
         const passedBookings =
-          additionalQuery[2] &&
+          bookingsRef[0][2] &&
           (await firebase
             .firestore()
             .collection(BOOKINGS)
-            .where(...additionalQuery)
+            .where(...bookingsRef[0])
             .where('status', 'in', [BOOKED])
             .where('start', '<=', currentDateFormatted)
             .orderBy('start', 'desc')
@@ -51,11 +51,11 @@ const useGetBookingsCounter = ({ additionalQuery, bookingsCounterName }) => {
 
         // count canceled bookings in the collection
         const canceledBookings =
-          additionalQuery[2] &&
+          bookingsRef[0][2] &&
           (await firebase
             .firestore()
             .collection(BOOKINGS)
-            .where(...additionalQuery)
+            .where(...bookingsRef[0])
             .where('status', '==', CANCELED)
             .orderBy('start', 'desc')
             .get())
@@ -66,7 +66,7 @@ const useGetBookingsCounter = ({ additionalQuery, bookingsCounterName }) => {
     }
 
     bookings()
-  }, [additionalQuery, currentDateFormatted])
+  }, [bookingsRef, currentDateFormatted])
   // object to match the name of the counter and data from the collection
 
   // return [ futureBookingsCounter, passedBookingsCounter, canceledBookingsCounter]

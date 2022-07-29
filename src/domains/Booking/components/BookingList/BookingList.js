@@ -20,14 +20,16 @@ const BookingList = (props) => {
   )
   const onCreateButtonClick = () => history.push('/booking/create')
   const onEmptySpaceClick = () => setSelectedItem(null)
-  // [COMPUTED PROPERTIES]
 
+  // [COMPUTED PROPERTIES]
   const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   const isCollapsible = !bookings?.length && 'disabled'
   const defaultPanel = isPanelOpen && title
 
   const bgColor =
-    bookings?.length > 0 ? 'var(--badge-color)' : 'var(--btn-default-bg)'
+    bookings?.length > 0
+      ? 'var(--badge-color)'
+      : 'var(--ql-badge-color-disabled)'
   const handleChange = (key) => {
     localStorage.setItem(title, JSON.stringify(!!key?.length))
   }
