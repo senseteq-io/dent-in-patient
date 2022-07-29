@@ -15,48 +15,63 @@ import firestore from 'services/firebase/firestore'
 const baseSortRule = ['_createdAt', 'desc']
 
 const useCollection = (props) => {
+  const {
+    ref: propsRef,
+    where: propsWhere,
+    orderBy: propsOrderBy,
+    limit: propsLimit
+  } = props
   const [value, setValue] = useState()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!!propsRef)
   const [loadingMore, setLoadingMore] = useState()
   const [error, setError] = useState()
   const [lastVisible, setLastVisible] = useState()
   const [loadMoreAvailable, setLoadMoreAvailable] = useState(true)
 
-  useEffect(() => {
-    if (props?.where?.length) {
-      setLoadMoreAvailable(false)
-    }
-  }, [props?.where])
+  // COMPUTED PROPERTIES
 
   useEffect(() => {
+    if (propsWhere?.length) {
+      setLoadMoreAvailable(false)
+    }
+  }, [propsWhere])
+
+  useEffect(() => {
+    const orderByCheck = Array.isArray(propsOrderBy)
+      ? orderBy(...propsOrderBy)
+      : orderBy(...baseSortRule)
     const fetchData = async () => {
       setLoading(true)
-      const documents = []
       try {
-        const querySnapshot = props?.where?.length
+        const querySnapshot = propsWhere?.length
           ? query(
-              collection(firestore, props?.ref),
-              ...props?.where.map((rule) => where(...rule))
+              collection(firestore, propsRef),
+              ...propsWhere.map((rule) => where(...rule)),
+              orderByCheck,
+              limit(propsLimit)
             )
           : query(
-              collection(firestore, props?.ref),
-              Array.isArray(props?.orderBy)
-                ? orderBy(...props?.orderBy)
-                : orderBy(...baseSortRule),
-              limit(props?.limit)
+              collection(firestore, propsRef),
+              orderByCheck,
+              limit(propsLimit)
             )
         onSnapshot(querySnapshot, (data) => {
           setLoading(true)
-          setValue(data.docs.map((item) => item?.data()))
+          const documents = data?.docs?.map((item) => item?.data())
+          setValue(documents)
+          if (propsLimit) {
+            setLastVisible(data?.docs?.[data?.docs?.length - 1])
+          }
           setLoading(false)
         })
       } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err)
         setError(err)
       }
-      setLastVisible(documents?.[documents?.length - 1])
     }
-    fetchData()
-  }, [props?.where, props?.orderBy, props?.limit, props?.ref])
+    !!propsRef && fetchData()
+  }, [propsWhere, propsOrderBy, propsLimit, propsRef])
 
   const next = async () => {
     if (lastVisible) {
@@ -65,17 +80,20 @@ const useCollection = (props) => {
       try {
         const querySnapshot = await getDocs(
           query(
-            collection(firestore, props?.ref),
-            orderBy(props.orderBy),
+            collection(firestore, propsRef),
+            ...propsWhere.map((rule) => where(...rule)),
+            Array.isArray(propsOrderBy)
+              ? orderBy(...propsOrderBy)
+              : orderBy(...baseSortRule),
             startAfter(lastVisible),
-            limit(props?.limit)
+            limit(propsLimit)
           )
         )
-        querySnapshot.forEach((doc) => {
-          documents.push(doc)
-        })
+        querySnapshot.forEach((doc) => documents.push(doc))
         setLastVisible(querySnapshot[querySnapshot.length - 1])
       } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err)
         setError(err)
       }
       setValue((oldValue) => [
