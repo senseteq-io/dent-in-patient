@@ -68,8 +68,6 @@ const useGetBookingsCounter = ({ bookingsCounterName, bookingsRef }) => {
     bookings()
   }, [bookingsRef, currentDateFormatted])
   // object to match the name of the counter and data from the collection
-
-  // return [ futureBookingsCounter, passedBookingsCounter, canceledBookingsCounter]
   return bookingCounter[bookingsCounterName]
 }
 export default useGetBookingsCounter
