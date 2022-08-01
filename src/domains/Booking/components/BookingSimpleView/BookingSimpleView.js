@@ -22,30 +22,28 @@ import {
   StyledPanel,
   StyledRibbon
 } from './BookingSimpleView.styled'
-import {
-  useCollectionDataOnce,
-  useDocumentDataOnce
-} from 'react-firebase-hooks/firestore'
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
 import PropTypes from 'prop-types'
-import firebase from 'firebase/compat/app'
 import moment from 'moment'
 import { sendBackendRequest } from 'utils'
-// import { useHistory } from 'react-router-dom'
+import { useGetBookingData } from 'domains/Booking/hooks/get'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingSimpleView = (props) => {
   const { booking } = props
-  // const history = useHistory()
   const { t } = useTranslations()
+
+  // ADDITIONAL HOOKS
+  const [clinician, treatment, clinic, addons] = useGetBookingData(booking)
+  
+  // COMPUTED PROPERTIES
   const currentDateFormatted = useMemo(
     () => moment().format('YYYY-MM-DDTHH:mm:ss'),
     []
   )
-
   const checkBookingStatus =
     booking?.status === 'CANCELED'
       ? 'Canceled'
@@ -58,39 +56,6 @@ const BookingSimpleView = (props) => {
       : currentDateFormatted > booking?.start
       ? 'var(--ql-color-dark-t-lighten1)'
       : 'var(--ql-color-accent1)'
-
-  const [clinician] = useDocumentDataOnce(
-    booking?.clinicianId &&
-      firebase
-        .firestore()
-        .collection('clinicians')
-        .doc(booking?.clinicianId?.toString())
-  )
-
-  const [treatment] = useDocumentDataOnce(
-    booking?.treatmentId &&
-      firebase
-        .firestore()
-        .collection('treatments')
-        .doc(booking?.treatmentId?.toString())
-  )
-
-  const [clinic] = useDocumentDataOnce(
-    booking?.clinicId &&
-      firebase
-        .firestore()
-        .collection('clinics')
-        .doc(booking?.clinicId?.toString())
-  )
-  const [addons] = useCollectionDataOnce(
-    booking?.addons?.length &&
-      firebase
-        .firestore()
-        .collection('treatments')
-        .doc(treatment?._id?.toString())
-        .collection('treatmentsAddons')
-        .where('_id', 'in', booking?.addons)
-  )
 
   const handleBookingCancel = async () => {
     const cancelResponse = await sendBackendRequest({
@@ -112,8 +77,6 @@ const BookingSimpleView = (props) => {
       })
     }
   }
-  // const handleEdit = () => history.push(`/bookings/${booking?._id}/edit`)
-  // const handleOpen = () => history.push(`/bookings/${booking?._id}`)
 
   const start = useMemo(() => moment(booking?.start).format('HH:mm'), [booking])
   const end = useMemo(() => moment(booking?.end).format('HH:mm'), [booking])
@@ -137,6 +100,10 @@ const BookingSimpleView = (props) => {
     ) : (
       '-'
     )
+  const checkPriceIsZero = useMemo(
+    () => (booking?.price === 0 ? t('free') : `${booking?.price},-`),
+    [booking?.price, t]
+  )
   return (
     <CardDropdown>
       <StyledRibbon text={t(checkBookingStatus)} color={changeBadgeColor}>
@@ -153,7 +120,7 @@ const BookingSimpleView = (props) => {
                 {/* booking price  */}
                 <Col cw="auto">
                   <Title wordBreak="break-word" variant="h5">
-                    {props?.booking?.price},-
+                    {checkPriceIsZero}
                   </Title>
                 </Col>
               </Row>
