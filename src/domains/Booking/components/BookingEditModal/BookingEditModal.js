@@ -129,9 +129,33 @@ const BookingEditModal = (props) => {
       visible={isModalVisible}
       closable={false}
       width="40%"
-      title={<Title variant="h3">{t('Change booking time')}</Title>}
+      title={
+        <>
+          <Title variant="h3">{t('Change booking time')}</Title>
+          <Row overflowX="auto" flexDirection="row" mx={16} noGutters>
+            <Col cw="auto" flexDirection="row">
+              {timeslotsCalendarDays?.map((day, index) => (
+                <CalendarItem
+                  index={index}
+                  key={`${day.date}${index}`}
+                  name={day?.weekday}
+                  number={day?.day}
+                  selected={day?.date === selectedDate}
+                  disabled={false}
+                  monthName={day?.monthName}
+                  onClick={() => setSelectedDate(day.date)}
+                  selectedDate={selectedDate}
+                />
+              ))}
+            </Col>
+          </Row>
+        </>
+      }
       bodyStyle={{
-        height: 'calc(100vh - 200px)'
+        height: 'calc(100vh - 300px)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'scroll'
       }}
       okText={t('Save')}
       okButtonProps={{
@@ -140,9 +164,27 @@ const BookingEditModal = (props) => {
       }}
       onOk={handleBookingEdit}
       onCancel={handleModalCancel}
-      footer={null}
+      // footer={null}
+      footer={
+        <>
+          <Row h="right">
+            <Col cw="auto">
+              <Button type="text">{t('Cancel')}</Button>
+            </Col>
+            <Col cw="auto" pl={0}>
+              <Button
+                type="primary"
+                disabled={!selectedTimeslot}
+                loading={editBookingLoading}
+              >
+                {t('Save')}
+              </Button>
+            </Col>
+          </Row>
+        </>
+      }
     >
-      <Row overflowX="auto" flexDirection="row" mx={16} noGutters>
+      {/* <Row overflowX="auto" flexDirection="row" mx={16} noGutters>
         <Col cw="auto" flexDirection="row">
           {timeslotsCalendarDays?.map((day, index) => (
             <CalendarItem
@@ -158,7 +200,7 @@ const BookingEditModal = (props) => {
             />
           ))}
         </Col>
-      </Row>
+      </Row> */}
 
       {availableTimeslots?.length ? (
         <Row
@@ -181,11 +223,16 @@ const BookingEditModal = (props) => {
           ))}
         </Row>
       ) : (
-        <Box display="flex" flex={1} flexDirection="column">
+        <Box
+          display="flex"
+          flex={1}
+          flexDirection="column"
+          justifyContent="center"
+        >
           <NoData description={t('No available timeslots for chosen date')} />
         </Box>
       )}
-      <Row h="right">
+      {/* <Row h="right">
         <Col cw="auto">
           <Button type="text">{t('Cancel')}</Button>
         </Col>
@@ -198,7 +245,7 @@ const BookingEditModal = (props) => {
             {t('Save')}
           </Button>
         </Col>
-      </Row>
+      </Row> */}
     </StyledModal>
   )
 }
