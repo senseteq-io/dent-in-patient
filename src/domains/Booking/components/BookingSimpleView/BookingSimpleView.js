@@ -4,6 +4,7 @@ import {
   Button,
   Col,
   Container,
+  Link,
   Row,
   Text,
   Title
@@ -13,6 +14,7 @@ import {
   ClockCircleOutlined,
   DownOutlined,
   EnvironmentOutlined,
+  ExclamationOutlined,
   FileAddOutlined,
   MedicineBoxOutlined
 } from '@ant-design/icons'
@@ -22,6 +24,7 @@ import {
   StyledPanel,
   StyledRibbon
 } from './BookingSimpleView.styled'
+import { useEffect, useMemo, useState } from 'react'
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
@@ -29,21 +32,33 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 import { sendBackendRequest } from 'utils'
 import { useGetBookingData } from 'domains/Booking/hooks/get'
-import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingSimpleView = (props) => {
   const { booking } = props
   const { t } = useTranslations()
-
+  const [disabledBtn, setDisabledBtn] = useState(true)
   // ADDITIONAL HOOKS
   const [clinician, treatment, clinic, addons] = useGetBookingData(booking)
-  
+
   // COMPUTED PROPERTIES
   const currentDateFormatted = useMemo(
     () => moment().format('YYYY-MM-DDTHH:mm:ss'),
     []
   )
+  const startMoment = moment(booking?.start)
+  const currentMoment = moment(currentDateFormatted)
+
+  // check if current  date is less that in 48 hours to booking date
+  var check48hoursEditPossibility =
+    startMoment.diff(currentMoment, 'hours') > 48
+
+  // useEffect to track check48hoursEditPossibility and change disabledBtn statement
+  useEffect(() => {
+    if (check48hoursEditPossibility) setDisabledBtn(false)
+    return null
+  }, [check48hoursEditPossibility])
+
   const checkBookingStatus =
     booking?.status === 'CANCELED'
       ? 'Canceled'
@@ -58,16 +73,25 @@ const BookingSimpleView = (props) => {
       : 'var(--ql-color-accent1)'
 
   const handleBookingCancel = async () => {
-    const cancelResponse = await sendBackendRequest({
-      endpoint: `/bookings/${booking?._id}`,
-      method: 'DELETE',
-      errorDescription: t('Failed to cancel booking')
-    })
-    if (cancelResponse?.data?.booking === 'CANCELED') {
-      notification.success({
-        message: 'Success',
-        description: t('Booking cancelled')
+    if (check48hoursEditPossibility) {
+      const cancelResponse = await sendBackendRequest({
+        endpoint: `/bookings/${booking?._id}`,
+        method: 'DELETE',
+        errorDescription: t('Failed to cancel booking')
       })
+      if (cancelResponse?.data?.booking === 'CANCELED') {
+        notification.success({
+          message: 'Success',
+          description: t('Booking cancelled')
+        })
+      } else {
+        notification.error({
+          message: 'Error',
+          description: t(
+            'Booking can not be canceled less than 48 hours before the start time'
+          )
+        })
+      }
     } else {
       notification.error({
         message: 'Error',
@@ -381,10 +405,52 @@ const BookingSimpleView = (props) => {
                         </Text>
                       }
                     >
-                      <Button block size="medium" danger type="text">
+                      <Button
+                        block
+                        size="medium"
+                        danger
+                        type="text"
+                        disabled={disabledBtn}
+                      >
                         {t('Cancel')}
                       </Button>
                     </Popconfirm>
+                    {disabledBtn && (
+                      <Popconfirm
+                        showCancel={false}
+                        cancelText="No"
+                        okButtonProps={{ danger: true }}
+                        title={
+                          <Box display="flex" flexDirection="column">
+                            <Text
+                              variant="body1"
+                              style={{
+                                fontWeight: '600',
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              {t(
+                                'Booking can not be canceled less than 48 hours before the start time'
+                              )}
+                            </Text>
+                            <Text
+                              variant="body1"
+                              style={{
+                                fontWeight: '600',
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              {t(
+                                'In case of an emergency contact us by phone:'
+                              )}
+                              <Link href={'tel:23651881'}>23651881</Link>
+                            </Text>
+                          </Box>
+                        }
+                      >
+                        <Button ml={3} icon={<ExclamationOutlined />} />
+                      </Popconfirm>
+                    )}
                   </Col>
                 </Row>
               )}
