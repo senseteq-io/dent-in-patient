@@ -1,31 +1,37 @@
-import { Badge, Card, Col, Row, Title } from '@qonsoll/react-design'
+import { Badge, Button, Card, Col, Row, Title } from '@qonsoll/react-design'
 import { StyledCollapse, StyledPanel } from './BookingList.styled'
-import { useMemo, useState } from 'react'
 
 import { AddItemCard } from 'components'
 import BookingSimpleView from '../BookingSimpleView'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
+import { useMemo } from 'react'
+import { useTranslations } from 'contexts/Translation'
 
 const BookingList = (props) => {
-  const { bookings, title } = props
+  const { bookings, title, bookingCounter, loadMoreAvailable, next } = props
   const history = useHistory()
-  const [selectedItem, setSelectedItem] = useState(null)
+  const { t } = useTranslations()
+
   const isPanelOpen = useMemo(
     () => JSON.parse(localStorage.getItem(title)),
     [title]
   )
   const onCreateButtonClick = () => history.push('/booking/create')
-  const onEmptySpaceClick = () => setSelectedItem(null)
+  // [COMPUTED PROPERTIES]
   const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   const isCollapsible = !bookings?.length && 'disabled'
   const defaultPanel = isPanelOpen && title
 
+  const bgColor =
+    bookings?.length > 0
+      ? 'var(--badge-color)'
+      : 'var(--ql-badge-color-disabled)'
   const handleChange = (key) => {
     localStorage.setItem(title, JSON.stringify(!!key?.length))
   }
   return (
-    <Row onClick={onEmptySpaceClick} mb="16px">
+    <Row mb="16px">
       <>
         {!props?.hideAddCard && (
           <AddItemCard
@@ -55,12 +61,9 @@ const BookingList = (props) => {
                 </Title>
                 <Badge
                   showZero
-                  count={bookings?.length}
+                  count={bookingCounter}
                   style={{
-                    backgroundColor:
-                      bookings?.length > 0
-                        ? 'var(--badge-color)'
-                        : 'var(--btn-default-bg)'
+                    backgroundColor: bgColor
                   }}
                 />
               </>
@@ -71,11 +74,6 @@ const BookingList = (props) => {
                 <Col key={booking?._id || index} cw={checkRenderConditions}>
                   <Card
                     onContextMenu={(e) => e.preventDefault()}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setSelectedItem(booking?._id)
-                    }}
                     bodyStyle={{
                       padding: '8px 0px',
                       borderRadius: '12px',
@@ -83,15 +81,7 @@ const BookingList = (props) => {
                       height: '100%'
                     }}
                     style={{
-                      backgroundColor:
-                        booking?._id === selectedItem
-                          ? 'var(--ql-color-accent1-t-lighten6)'
-                          : '',
                       borderWidth: '1px',
-                      borderColor:
-                        booking?._id === selectedItem
-                          ? 'var(--ql-color-accent1-t-lighten4)'
-                          : 'transparent',
                       alignItems: 'center',
                       display: 'flex'
                     }}
@@ -102,29 +92,31 @@ const BookingList = (props) => {
                 </Col>
               ))}
             </Row>
+            {loadMoreAvailable && (
+              <Row mb="2">
+                <Col cw="12">
+                  <Button onClick={next}>{t('Load more')}</Button>
+                </Col>
+              </Row>
+            )}
           </StyledPanel>
         </StyledCollapse>
       </>
-      {/* ) : (
-        <Col>
-          <Empty
-            showImage={!props?.isListWithCreate}
-            message={t('No bookings')}
-          />
-        </Col>
-      )} */}
     </Row>
   )
 }
 
 BookingList.propTypes = {
   bookings: PropTypes.array,
+  bookingCounter: PropTypes.number,
   title: PropTypes.string,
   clinicians: PropTypes.array,
   onCreateButtonClick: PropTypes.func,
   isListWithCreate: PropTypes.bool,
   hideAddCard: PropTypes.bool,
-  listView: PropTypes.bool
+  listView: PropTypes.bool,
+  loadMoreAvailable: PropTypes.bool,
+  next: PropTypes.func
 }
 
 export default BookingList

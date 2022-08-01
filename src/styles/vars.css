@@ -48,4 +48,8 @@
   --ql-color-accent1-t-lighten6: rgb(91, 173, 189, var(--ql-color-blending-lighten6));
   --ql-border-radius-lg: 32px;
   --btn-border-radius-base: var(--ql-border-radius-lg);
+
+/* Badge */
+  --ql-badge-color-disabled: var(--ql-color-dark-t-lighten5);
+
 }
