@@ -24,74 +24,40 @@ import {
   StyledPanel,
   StyledRibbon
 } from './BookingSimpleView.styled'
-import { useEffect, useMemo, useState } from 'react'
+import { useGetBookingData, useGetBookingDate } from 'domains/Booking/hooks/get'
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
 import PropTypes from 'prop-types'
-import moment from 'moment'
 import { sendBackendRequest } from 'utils'
-import { useGetBookingData } from 'domains/Booking/hooks/get'
+import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingSimpleView = (props) => {
   const { booking } = props
   const { t } = useTranslations()
-  const [disabledBtn, setDisabledBtn] = useState(true)
   // ADDITIONAL HOOKS
   const [clinician, treatment, clinic, addons] = useGetBookingData(booking)
-
-  // COMPUTED PROPERTIES
-  const currentDateFormatted = useMemo(
-    () => moment().format('YYYY-MM-DDTHH:mm:ss'),
-    []
-  )
-  const startMoment = moment(booking?.start)
-  const currentMoment = moment(currentDateFormatted)
-
-  // check if current  date is less that in 48 hours to booking date
-  var check48hoursEditPossibility =
-    startMoment.diff(currentMoment, 'hours') > 48
-
-  // useEffect to track check48hoursEditPossibility and change disabledBtn statement
-  useEffect(() => {
-    if (check48hoursEditPossibility) setDisabledBtn(false)
-    return null
-  }, [check48hoursEditPossibility])
-
-  const checkBookingStatus =
-    booking?.status === 'CANCELED'
-      ? 'Canceled'
-      : currentDateFormatted > booking?.start
-      ? 'Passed'
-      : 'Future'
-  const changeBadgeColor =
-    booking?.status === 'CANCELED'
-      ? 'var(--ql-color-dark-t-lighten3)'
-      : currentDateFormatted > booking?.start
-      ? 'var(--ql-color-dark-t-lighten1)'
-      : 'var(--ql-color-accent1)'
+  const [
+    disabledCancelBtn,
+    start,
+    end,
+    checkBookingStatus,
+    changeBadgeColor,
+    isCancelButtonVisible
+  ] = useGetBookingDate(booking)
 
   const handleBookingCancel = async () => {
-    if (check48hoursEditPossibility) {
-      const cancelResponse = await sendBackendRequest({
-        endpoint: `/bookings/${booking?._id}`,
-        method: 'DELETE',
-        errorDescription: t('Failed to cancel booking')
+    const cancelResponse = await sendBackendRequest({
+      endpoint: `/bookings/${booking?._id}`,
+      method: 'DELETE',
+      errorDescription: t('Failed to cancel booking')
+    })
+    if (cancelResponse?.data?.booking === 'CANCELED') {
+      notification.success({
+        message: 'Success',
+        description: t('Booking cancelled')
       })
-      if (cancelResponse?.data?.booking === 'CANCELED') {
-        notification.success({
-          message: 'Success',
-          description: t('Booking cancelled')
-        })
-      } else {
-        notification.error({
-          message: 'Error',
-          description: t(
-            'Booking can not be canceled less than 48 hours before the start time'
-          )
-        })
-      }
     } else {
       notification.error({
         message: 'Error',
@@ -102,14 +68,6 @@ const BookingSimpleView = (props) => {
     }
   }
 
-  const start = useMemo(() => moment(booking?.start).format('HH:mm'), [booking])
-  const end = useMemo(() => moment(booking?.end).format('HH:mm'), [booking])
-  const isCancelButtonVisible = useMemo(
-    () =>
-      moment(booking?.start).isAfter(moment()) &&
-      booking?.status !== 'CANCELED',
-    [booking]
-  )
   const checkAddonsAmount =
     addons?.length > 0 ? (
       <Text
@@ -410,12 +368,12 @@ const BookingSimpleView = (props) => {
                         size="medium"
                         danger
                         type="text"
-                        disabled={disabledBtn}
+                        disabled={disabledCancelBtn}
                       >
                         {t('Cancel')}
                       </Button>
                     </Popconfirm>
-                    {disabledBtn && (
+                    {disabledCancelBtn && (
                       <Popconfirm
                         showCancel={false}
                         cancelText="No"
