@@ -8,25 +8,20 @@ import { useEffect, useMemo, useState } from 'react'
 import { useGDPRStatus, useSessionActions } from 'domains/Session/hooks'
 
 import { COLLECTIONS } from '__constants__'
-import PATHS from 'pages/paths'
 import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
 import moment from 'moment'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHandleError } from 'hooks'
-import { useLocation } from 'react-router-dom'
 
 const { BOOKINGS } = COLLECTIONS
-const unauthentificatedPaths = Object.values(PATHS.UNAUTHENTICATED).filter(
-  (path) => path !== PATHS.UNAUTHENTICATED.VIPPS_LOGIN_CALLBACK
-)
 
 const UserProvider = ({ children }) => {
   /* The above code is a function that takes in a callback function as an argument.
   The callback function is then called with the error as an argument. */
   const handleError = useHandleError()
-  const location = useLocation()
+
   /* Using the useGDPRStatus hook to get the GDPR status of the user. */
   const gdpr = useGDPRStatus()
   // need this state to prevent overwriting user data when login with google
@@ -64,10 +59,6 @@ const UserProvider = ({ children }) => {
   )
   // Compute client booking by getting first booking from the collection
   const nextBooking = useMemo(() => fetchedBookings?.[0], [fetchedBookings])
-  const isUnauthenticatedPath = useMemo(
-    () => unauthentificatedPaths.includes(location.pathname),
-    [location.pathname]
-  )
 
   // Session methods
   const {
@@ -83,10 +74,10 @@ const UserProvider = ({ children }) => {
     if (user && bookingLoading) {
       setUserPreloading(false)
     }
-    if (!user && !bookingLoading && isUnauthenticatedPath) {
+    if (!user && !bookingLoading) {
       setUserPreloading(true)
     }
-  }, [user, bookingLoading, userPreloading, isUnauthenticatedPath])
+  }, [user, bookingLoading, userPreloading])
 
   // Initial user saving to the DB
   useEffect(() => {

@@ -67,10 +67,10 @@ const LoginForm = ({ login, onError, onForgotPasswordClick, ...rest }) => {
 
   useEffect(() => {
     /* This code is setting the email field to the lastSession email if it exists. */
-    if (lastSession.email && !clientPassword) {
+    if (lastSession?.email && !clientPassword) {
       form.setFieldsValue({ email: lastSession.email })
     }
-  }, [clientPassword, form, lastSession.email])
+  }, [clientPassword, form, lastSession])
 
   //listen history change and set initial value from url params and auto login user
   useEffect(() => {
