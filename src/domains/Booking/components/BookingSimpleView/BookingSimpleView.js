@@ -4,6 +4,7 @@ import {
   Button,
   Col,
   Container,
+  Link,
   Row,
   Text,
   Title
@@ -13,6 +14,7 @@ import {
   ClockCircleOutlined,
   DownOutlined,
   EnvironmentOutlined,
+  ExclamationOutlined,
   FileAddOutlined,
   MedicineBoxOutlined
 } from '@ant-design/icons'
@@ -22,40 +24,28 @@ import {
   StyledPanel,
   StyledRibbon
 } from './BookingSimpleView.styled'
+import { useGetBookingData, useGetBookingDate } from 'domains/Booking/hooks/get'
 
 import { CardDropdown } from 'components'
 import { ClinicianAvatarIcon } from 'domains/Clinician/components'
 import PropTypes from 'prop-types'
-import moment from 'moment'
 import { sendBackendRequest } from 'utils'
-import { useGetBookingData } from 'domains/Booking/hooks/get'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingSimpleView = (props) => {
   const { booking } = props
   const { t } = useTranslations()
-
   // ADDITIONAL HOOKS
   const [clinician, treatment, clinic, addons] = useGetBookingData(booking)
-  
-  // COMPUTED PROPERTIES
-  const currentDateFormatted = useMemo(
-    () => moment().format('YYYY-MM-DDTHH:mm:ss'),
-    []
-  )
-  const checkBookingStatus =
-    booking?.status === 'CANCELED'
-      ? 'Canceled'
-      : currentDateFormatted > booking?.start
-      ? 'Passed'
-      : 'Future'
-  const changeBadgeColor =
-    booking?.status === 'CANCELED'
-      ? 'var(--ql-color-dark-t-lighten3)'
-      : currentDateFormatted > booking?.start
-      ? 'var(--ql-color-dark-t-lighten1)'
-      : 'var(--ql-color-accent1)'
+  const [
+    disabledCancelBtn,
+    start,
+    end,
+    checkBookingStatus,
+    changeBadgeColor,
+    isCancelButtonVisible
+  ] = useGetBookingDate(booking)
 
   const handleBookingCancel = async () => {
     const cancelResponse = await sendBackendRequest({
@@ -78,14 +68,6 @@ const BookingSimpleView = (props) => {
     }
   }
 
-  const start = useMemo(() => moment(booking?.start).format('HH:mm'), [booking])
-  const end = useMemo(() => moment(booking?.end).format('HH:mm'), [booking])
-  const isCancelButtonVisible = useMemo(
-    () =>
-      moment(booking?.start).isAfter(moment()) &&
-      booking?.status !== 'CANCELED',
-    [booking]
-  )
   const checkAddonsAmount =
     addons?.length > 0 ? (
       <Text
@@ -381,10 +363,52 @@ const BookingSimpleView = (props) => {
                         </Text>
                       }
                     >
-                      <Button block size="medium" danger type="text">
+                      <Button
+                        block
+                        size="medium"
+                        danger
+                        type="text"
+                        disabled={disabledCancelBtn}
+                      >
                         {t('Cancel')}
                       </Button>
                     </Popconfirm>
+                    {disabledCancelBtn && (
+                      <Popconfirm
+                        showCancel={false}
+                        cancelText="No"
+                        okButtonProps={{ danger: true }}
+                        title={
+                          <Box display="flex" flexDirection="column">
+                            <Text
+                              variant="body1"
+                              style={{
+                                fontWeight: '600',
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              {t(
+                                'Booking can not be canceled less than 48 hours before the start time'
+                              )}
+                            </Text>
+                            <Text
+                              variant="body1"
+                              style={{
+                                fontWeight: '600',
+                                letterSpacing: '0.5px'
+                              }}
+                            >
+                              {t(
+                                'In case of an emergency contact us by phone:'
+                              )}
+                              <Link href={'tel:23651881'}>23651881</Link>
+                            </Text>
+                          </Box>
+                        }
+                      >
+                        <Button ml={3} icon={<ExclamationOutlined />} />
+                      </Popconfirm>
+                    )}
                   </Col>
                 </Row>
               )}
