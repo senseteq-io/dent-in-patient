@@ -410,7 +410,7 @@ const BookingSimpleView = (props) => {
                           variant="body1"
                           style={{ fontWeight: '600', letterSpacing: '0.5px' }}
                         >
-                          {t('Cancel yours booking?')}
+                          {t('Cancel your booking?')}
                         </Text>
                       }
                     >
