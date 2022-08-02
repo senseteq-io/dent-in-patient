@@ -12,7 +12,7 @@ const sendBackendRequest = async ({
   isJsonResponse = true
 }) => {
   try {
-    if (!endpoint || (!body && method !== 'DELETE')) {
+    if (!endpoint || (!body && !['DELETE', 'GET'].includes(method))) {
       throw new Error('Missing required parameters as endpoint or body')
     }
 
