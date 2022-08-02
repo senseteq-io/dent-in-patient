@@ -1,0 +1,2 @@
+import useGetTimeslotsWithoutAdditionalData from './useGetTimeslotsWithoutAdditionalData'
+export default useGetTimeslotsWithoutAdditionalData
