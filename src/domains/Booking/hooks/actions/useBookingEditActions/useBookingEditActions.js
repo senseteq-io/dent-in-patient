@@ -1,4 +1,3 @@
-// import { CANCELED_STATUS } from 'domains/Booking/__constants__/bookingStatuses'
 import { notification } from 'antd'
 import { sendBackendRequest } from 'utils'
 import { useState } from 'react'
@@ -51,9 +50,9 @@ const useBookingEditActions = (props) => {
       await sendBackendRequest({
         endpoint: `/bookings/${booking?._id}`,
         method: 'DELETE',
-        errorDescription: t('Could not cancel booking'),
-        isJSonResponse: false
+        errorDescription: t('Could not cancel booking')
       })
+
       notification.success({
         message: 'Success',
         description: 'Booking was changed successfully'

@@ -2,14 +2,21 @@ import { Badge, Button, Card, Col, Row, Title } from '@qonsoll/react-design'
 import { StyledCollapse, StyledPanel } from './BookingList.styled'
 
 import { AddItemCard } from 'components'
-import BookingSimpleView from '../BookingSimpleView'
+import { BookingSimpleView } from 'domains/Booking/components'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useTranslations } from 'contexts/Translation'
 
 const BookingList = (props) => {
-  const { bookings, title, bookingCounter, loadMoreAvailable, next } = props
+  const {
+    bookings,
+    title,
+    bookingCounter,
+    loadMoreAvailable,
+    next,
+    onEditBooking
+  } = props
   const history = useHistory()
   const { t } = useTranslations()
 
@@ -17,7 +24,7 @@ const BookingList = (props) => {
     () => JSON.parse(localStorage.getItem(title)),
     [title]
   )
-  const onCreateButtonClick = () => history.push('/booking/create')
+
   // [COMPUTED PROPERTIES]
   const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   const isCollapsible = !bookings?.length && 'disabled'
@@ -27,6 +34,9 @@ const BookingList = (props) => {
     bookings?.length > 0
       ? 'var(--badge-color)'
       : 'var(--ql-badge-color-disabled)'
+
+  const onCreateButtonClick = () => history.push('/booking/create')
+
   const handleChange = (key) => {
     localStorage.setItem(title, JSON.stringify(!!key?.length))
   }
@@ -87,7 +97,10 @@ const BookingList = (props) => {
                     }}
                     mb={32}
                   >
-                    <BookingSimpleView booking={booking} />
+                    <BookingSimpleView
+                      booking={booking}
+                      onEditBooking={onEditBooking}
+                    />
                   </Card>
                 </Col>
               ))}
@@ -116,7 +129,8 @@ BookingList.propTypes = {
   hideAddCard: PropTypes.bool,
   listView: PropTypes.bool,
   loadMoreAvailable: PropTypes.bool,
-  next: PropTypes.func
+  next: PropTypes.func,
+  onEditBooking: PropTypes.func
 }
 
 export default BookingList

@@ -1,9 +1,9 @@
+import { BookingEditModal, BookingList } from 'domains/Booking/components'
 import { Col, Container, Row, Text } from '@qonsoll/react-design'
+import { memo, useState } from 'react'
 
 import BOOKINGS_CONTERS from '../../__constants__/bookinsCounters'
-import BookingList from '../BookingList'
 import PropTypes from 'prop-types'
-import { memo } from 'react'
 import { useBookings } from '../../../Booking/hooks/get'
 import { useTranslations } from 'contexts/Translation'
 
@@ -17,11 +17,19 @@ function BookingsByType(props) {
 
   const { t } = useTranslations()
 
+  const [bookingToEdit, setBookingToEdit] = useState(null)
   const [bookings, loading, error, next, loadMoreAvailable, bookingCounter] =
     useBookings({
       bookingsRef,
       bookingsCounterName
     })
+
+  const handleModalCancel = () => {
+    setBookingToEdit(null)
+  }
+  const onEditBooking = (booking) => {
+    setBookingToEdit(booking)
+  }
 
   return (
     <Container>
@@ -40,6 +48,7 @@ function BookingsByType(props) {
               bookingCounter={bookingCounter}
               loadMoreAvailable={loadMoreAvailable}
               next={next}
+              onEditBooking={onEditBooking}
             />
           </Col>
         ) : null}
@@ -48,6 +57,12 @@ function BookingsByType(props) {
             <Text>{JSON.stringify(error)}</Text>
           </Col>
         ) : null}
+
+        <BookingEditModal
+          booking={bookingToEdit}
+          isModalVisible={!!bookingToEdit}
+          handleModalCancel={handleModalCancel}
+        />
       </Row>
     </Container>
   )
