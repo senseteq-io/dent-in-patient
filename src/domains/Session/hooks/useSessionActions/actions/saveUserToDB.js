@@ -38,7 +38,8 @@ const saveUserToDB = ({
       lastName,
       isPhoneValid: null,
       phone: phoneNumber || null,
-      data: null
+      data: null,
+      postalCode: null
       // role
     })
     .catch((err) => {

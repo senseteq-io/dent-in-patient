@@ -11,6 +11,7 @@ import { COLLECTIONS } from '__constants__'
 import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
+import { getDocument } from 'services/firestore'
 import moment from 'moment'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHandleError } from 'hooks'
@@ -90,20 +91,26 @@ const UserProvider = ({ children }) => {
       !userPreloading && user && !value?.email && !bookingLoading
     /* If there is no user data in the database, save the user data to the database. */
     if (isNoUserDataInDB) {
-      const [firstName, lastName] = user?.displayName?.split(' ') || [
-        null,
-        null
-      ]
-      saveUserToDB({
-        _id: user.uid,
-        email: user.email,
-        avatarUrl: user.photoURL,
-        agreement: true,
-        firstName: firstName,
-        lastName: lastName,
-        phoneNumber: user.phoneNumber || null,
-        gdpr,
-        onError: handleError
+      // Check above sometimes not working correctly, so
+      // additional check for user doc existing was added, to prevent overwriting user data
+      getDocument(COLLECTIONS.USERS, user.uid).then((doc) => {
+        if (!doc.exists) {
+          const [firstName, lastName] = user?.displayName?.split(' ') || [
+            null,
+            null
+          ]
+          saveUserToDB({
+            _id: user.uid,
+            email: user.email,
+            avatarUrl: user.photoURL,
+            agreement: true,
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: user.phoneNumber || null,
+            gdpr,
+            onError: handleError
+          })
+        }
       })
     }
   }, [
