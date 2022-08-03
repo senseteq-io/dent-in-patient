@@ -376,6 +376,15 @@ const BookingSimpleView = (props) => {
                         {t('Cancel')}
                       </Button>
                     </Popconfirm>
+                    <Button
+                      block
+                      size="medium"
+                      type="text"
+                      disabled={disabledCancelBtn}
+                      onClick={() => onEditBooking(booking)}
+                    >
+                      {t('Edit')}
+                    </Button>
                     {disabledCancelBtn && (
                       <Popconfirm
                         showCancel={false}
@@ -412,14 +421,6 @@ const BookingSimpleView = (props) => {
                         <Button ml={3} icon={<ExclamationOutlined />} />
                       </Popconfirm>
                     )}
-                    <Button
-                      block
-                      size="medium"
-                      type="text"
-                      onClick={() => onEditBooking(booking)}
-                    >
-                      {t('Edit')}
-                    </Button>
                   </Col>
                 </Row>
               )}
