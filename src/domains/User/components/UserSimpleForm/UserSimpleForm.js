@@ -52,6 +52,7 @@ const UserSimpleForm = (props) => {
       history.push(PATHS.UNAUTHENTICATED.LOGIN)
     } catch (e) {
       setIsFormProcessing(false)
+      // eslint-disable-next-line no-console
       console.error('Error occurred during saving profile data. ', e.message)
       notification.error({
         message: t('Failed to save profile data'),

@@ -69,10 +69,8 @@ function BookingsByType(props) {
 }
 
 BookingsByType.propTypes = {
-  bookingsBelongTo: PropTypes.object.isRequired,
   bookingsRef: PropTypes.array.isRequired,
   bookingTitle: PropTypes.string.isRequired,
-  additionalQuery: PropTypes.array.isRequired,
   bookingsCounterName: PropTypes.oneOf([
     FUTURE_BOOKINGS_COUNTER,
     PASSED_BOOKINGS_COUNTER,

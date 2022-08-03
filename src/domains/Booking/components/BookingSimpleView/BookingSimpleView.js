@@ -184,7 +184,7 @@ const BookingSimpleView = (props) => {
                         <Box>
                           {addons?.map((addon) => (
                             <Title
-                              key={addon.name}
+                              key={addon?._id}
                               fontSize="14px"
                               style={{
                                 fontWeight: '300',
@@ -368,7 +368,7 @@ const BookingSimpleView = (props) => {
                     >
                       <Button
                         block
-                        size="medium"
+                        size="middle"
                         danger
                         type="text"
                         disabled={disabledCancelBtn}
@@ -378,7 +378,7 @@ const BookingSimpleView = (props) => {
                     </Popconfirm>
                     <Button
                       block
-                      size="medium"
+                      size="middle"
                       type="text"
                       disabled={disabledCancelBtn}
                       onClick={() => onEditBooking(booking)}

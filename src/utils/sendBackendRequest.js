@@ -41,6 +41,8 @@ const sendBackendRequest = async ({
       description: errorDescription,
       placement: 'topRight'
     })
+
+    // eslint-disable-next-line no-console
     console.error(error)
   }
 }

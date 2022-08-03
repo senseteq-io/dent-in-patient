@@ -52,6 +52,7 @@ const SetNewPasswordForm = (props) => {
       }
     } catch (error) {
       const errorMessageComputed = error?.toString()
+      // eslint-disable-next-line no-console
       console.error(errorMessageComputed)
 
       notification.error({
@@ -64,6 +65,7 @@ const SetNewPasswordForm = (props) => {
     }
   }
   const onFinishFailed = (errorInfo) => {
+    // eslint-disable-next-line no-console
     console.error('Failed:', errorInfo)
 
     notification.error({

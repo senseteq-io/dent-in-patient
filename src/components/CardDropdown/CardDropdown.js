@@ -13,7 +13,7 @@ const CardDropdown = ({ handleEdit, handleDelete, handleOpen, children }) => {
 
   return (
     <Dropdown
-      trigger={['contextMenu']}
+      trigger={'contextMenu'}
       overlay={
         <Menu>
           {handleOpen ? (
@@ -22,7 +22,7 @@ const CardDropdown = ({ handleEdit, handleDelete, handleOpen, children }) => {
               icon={<FolderOpenOutlined />}
               onClick={(event) => {
                 event.domEvent.stopPropagation()
-                handleOpen()
+                handleOpen?.()
               }}
             >
               {t('Open')}
@@ -34,7 +34,7 @@ const CardDropdown = ({ handleEdit, handleDelete, handleOpen, children }) => {
               icon={<EditOutlined />}
               onClick={(event) => {
                 event.domEvent.stopPropagation()
-                handleEdit()
+                handleEdit?.()
               }}
             >
               {t('Edit')}
@@ -47,7 +47,7 @@ const CardDropdown = ({ handleEdit, handleDelete, handleOpen, children }) => {
               danger
               onClick={(event) => {
                 event.domEvent.stopPropagation()
-                handleDelete()
+                handleDelete?.()
               }}
             >
               {t('Delete')}
@@ -62,9 +62,9 @@ const CardDropdown = ({ handleEdit, handleDelete, handleOpen, children }) => {
 }
 
 CardDropdown.propTypes = {
-  handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  handleOpen: PropTypes.func.isRequired,
+  handleEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleOpen: PropTypes.func,
   children: PropTypes.node.isRequired
 }
 

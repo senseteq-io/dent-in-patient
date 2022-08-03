@@ -169,7 +169,7 @@ const BookingEditModal = (props) => {
 BookingEditModal.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleModalCancel: PropTypes.func.isRequired,
-  booking: PropTypes.object.isRequired
+  booking: PropTypes.object
 }
 
 export default BookingEditModal

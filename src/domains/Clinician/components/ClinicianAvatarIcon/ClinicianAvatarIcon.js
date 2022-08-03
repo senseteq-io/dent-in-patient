@@ -19,6 +19,6 @@ export default function ClinicianAvatarIcon({ name, variant }) {
 }
 
 ClinicianAvatarIcon.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   variant: PropTypes.string
 }

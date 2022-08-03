@@ -63,6 +63,7 @@ const useVippsAuth = () => {
           description: t('Can not login user with vipps'),
           placement: 'topRight'
         })
+        // eslint-disable-next-line no-console
         console.error(error)
         history.push(PATHS.UNAUTHENTICATED.LOGIN)
       }

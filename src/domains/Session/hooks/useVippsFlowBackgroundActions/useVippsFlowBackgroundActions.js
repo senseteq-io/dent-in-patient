@@ -113,6 +113,7 @@ const useVippsFlowBackgroundActions = () => {
             message: 'Error',
             description: t('Failed to update booking')
           })
+          // eslint-disable-next-line no-console
           console.error(e)
         }
       }

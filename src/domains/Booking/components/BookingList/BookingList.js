@@ -29,6 +29,7 @@ const BookingList = (props) => {
   const checkRenderConditions = props?.listView ? 12 : [12, 12, 6, 6, 6, 4]
   const isCollapsible = !bookings?.length && 'disabled'
   const defaultPanel = isPanelOpen && title
+  const bookingCounterFormatted = bookingCounter?.toString()
 
   const bgColor =
     bookings?.length > 0
@@ -71,7 +72,7 @@ const BookingList = (props) => {
                 </Title>
                 <Badge
                   showZero
-                  count={bookingCounter}
+                  count={bookingCounterFormatted}
                   style={{
                     backgroundColor: bgColor
                   }}
