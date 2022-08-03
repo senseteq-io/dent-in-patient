@@ -9,19 +9,8 @@ import Provider, { TranslationContext } from '@qonsoll/translation'
 
 import PropTypes from 'prop-types'
 import firebase from 'firebase/compat/app'
+import { spinnerWrapperProps } from './TranslationsProvider.styled'
 import { useMemo } from 'react'
-
-const spinnerWrapperProps = {
-  position: 'fixed',
-  bg: 'white',
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-  zIndex: 1000
-}
 
 const TranslationsProvider = (props) => {
   const { children } = props
