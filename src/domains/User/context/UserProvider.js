@@ -1,5 +1,6 @@
 import 'firebase/compat/firestore'
 
+import { doc, getDoc } from 'firebase/firestore'
 import {
   useCollectionData,
   useDocumentData
@@ -11,7 +12,7 @@ import { COLLECTIONS } from '__constants__'
 import PropTypes from 'prop-types'
 import UserContext from './UserContext'
 import firebase from 'firebase/compat/app'
-import { getDocument } from 'services/firestore'
+import { firestore } from 'services/firebase'
 import moment from 'moment'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useHandleError } from 'hooks'
@@ -93,25 +94,31 @@ const UserProvider = ({ children }) => {
     if (isNoUserDataInDB) {
       // Check above sometimes not working correctly, so
       // additional check for user doc existing was added, to prevent overwriting user data
-      getDocument(COLLECTIONS.USERS, user.uid).then((doc) => {
-        if (!doc.exists) {
-          const [firstName, lastName] = user?.displayName?.split(' ') || [
-            null,
-            null
-          ]
-          saveUserToDB({
-            _id: user.uid,
-            email: user.email,
-            avatarUrl: user.photoURL,
-            agreement: true,
-            firstName: firstName,
-            lastName: lastName,
-            phoneNumber: user.phoneNumber || null,
-            gdpr,
-            onError: handleError
-          })
-        }
-      })
+      const userDocRef = doc(firestore, COLLECTIONS?.USERS, user?.uid)
+      getDoc(userDocRef)
+        .then((doc) => {
+          if (!doc.exists) {
+            const [firstName, lastName] = user?.displayName?.split(' ') || [
+              null,
+              null
+            ]
+            saveUserToDB({
+              _id: user.uid,
+              email: user.email,
+              avatarUrl: user.photoURL,
+              agreement: true,
+              firstName: firstName,
+              lastName: lastName,
+              phoneNumber: user.phoneNumber || null,
+              gdpr,
+              onError: handleError
+            })
+          }
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error(err)
+        })
     }
   }, [
     bookingLoading,
