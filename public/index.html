@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Smil Tannlegesenter client page. Check or change your appointment."
-    />
-    </head>
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>Client | Smil Tannlegesenter</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-     <script>
-       window.onload = () => {
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Smil Tannlegesenter client page. Check or change your appointment." />
+</head>
+<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+<title>Client | Smil Tannlegesenter</title>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script>
+    window.onload = () => {
       widget = window.DentIn({
         position: 'bottom-right'
-      })}
- 
-  (function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)){ return; }
-    js = d.createElement(s); js.id = id;
-    js.onload = function(){
-        // remote script has loaded
-    };
-    js.src = "https://dent-in-client-prod.web.app/widget.min.js";
-    // js.src = "./widget.min.js";
+      })
+    }
 
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'opusClinic-unique-key'));
-    </script>
-  </body>
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement(s);
+      js.id = id;
+      js.onload = function () {
+        // remote script has loaded
+      };
+      js.src = "https://client.dent-in.no/widget.min.js";
+      // js.src = "./widget.min.js";
+
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'opusClinic-unique-key'));
+  </script>
+</body>
+
 </html>
