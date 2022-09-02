@@ -19,7 +19,7 @@ import { v4 as uuid } from 'uuid'
 const VIPPS_CALLBACK_PATH = '/auth/vipps-callback'
 const CLIENT_ID = process.env.REACT_APP_VIPPS_CLIENT_ID
 const VIPPS_URL = process.env.REACT_APP_VIPPS_API_URL
-const VIPPS_AUTH_ENDPOINT = 'access-management-1.0/access/oauth2/auth'
+const VIPPS_AUTH_ENDPOINT = '/access-management-1.0/access/oauth2/auth'
 const APP_URL = process.env.REACT_APP_URL
 
 const LoginMethods = (props) => {
